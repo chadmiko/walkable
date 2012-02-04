@@ -1,0 +1,329 @@
+/*  Less Framework 4 with 16/24 type presets
+  http://lessframework.com
+  by Joni Korpi
+  License: http://opensource.org/licenses/mit-license.php */
+
+
+
+/*  Resets
+  ------  */
+
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6,
+p, blockquote, pre, a, abbr, address, cite, code, del, dfn, em,
+img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, hr,
+dl, dt, dd, ol, ul, li, fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figure, figcaption, hgroup,
+menu, footer, header, nav, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+article, aside, canvas, figure, figure img, figcaption, hgroup,
+footer, header, nav, section, audio, video {
+  display: block;
+}
+
+a img {border: 0;}
+
+
+
+/*  Typography presets
+  ------------------  */
+
+.gigantic {
+  font-size: 110px;
+  line-height: 120px;
+  letter-spacing: -2px;
+}
+
+.huge, h1 {
+  font-size: 68px;
+  line-height: 72px;
+  letter-spacing: -1px;
+}
+
+.large, h2 {
+  font-size: 42px;
+  line-height: 48px;
+}
+
+.bigger, h3 {
+  font-size: 26px;
+  line-height: 36px;
+}
+
+.big, h4 {
+  font-size: 22px;
+  line-height: 30px;
+}
+
+body {
+  font: 16px/24px Georgia, serif;
+}
+
+.small, small {
+  font-size: 13px;
+  line-height: 18px;
+}
+.hide {
+  display:none;
+}
+
+
+/* Selection colours (easy to forget) */
+
+::selection     {background: rgb(255,255,158);}
+::-moz-selection  {background: rgb(255,255,158);}
+img::selection    {background: transparent;}
+img::-moz-selection {background: transparent;}
+body {-webkit-tap-highlight-color: rgb(255,255,158);}
+
+/**
+  Thanks to twitter.github.com/bootstrap
+  we are adding pieces of bootstrap 2.0 here
+*/
+ul, ol {
+  padding: 0;
+  margin: 0 0 9px 25px;
+}
+ul ul,
+ul ol,
+ol ol,
+ol ul {
+  margin-bottom: 0;
+}
+ul {
+  list-style: disc;
+}
+ol {
+  list-style: decimal;
+}
+li {
+  line-height: 18px;
+}
+ul.unstyled {
+  margin-left: 0;
+  list-style: none;
+}
+
+.row {
+  margin-left:-12px;
+  *zoom: 1;
+}
+.row:before, .row:after {
+  display:table;
+  content: "";
+}
+.row:after {
+  clear:both;
+}
+[class*="span"] {
+  float:left;
+  margin-left:12px;
+}
+.span1 {
+  width:56px;
+}
+.span2 {
+  width:124px;
+}
+.span3 {
+  width:204px;
+}
+.span4 {
+  width:272px;
+}
+
+
+/*
+  Default layout: 768px
+  Gutters: 24px
+  Outer margin
+*/
+body {
+  background-color:#eee;
+}
+
+.cf {zoom:1; }
+.cf:after  {
+  display:block;
+  content: ".";
+  clear:both;
+  height:0;
+  visibility:hidden;
+}
+
+.container {
+  width: 744px;
+  padding:0 12px;
+  margin:0 auto;
+}
+a.brand {
+  float:left;
+  width:180px;
+  display:block;
+}
+
+nav {
+  float:right;
+}
+nav ul li {
+  display:inline;
+  text-decoration:none;
+  margin-left:8px;
+}
+
+#content {
+  position:relative;
+}
+  #main {
+    width: 456px;
+    padding:0 ;
+    position:relative;
+    float:left;
+  }
+  #sidebar {
+    width:264px;
+    padding:0 0 0 12px;
+    float:right;
+    margin-top:24px;
+  }
+
+footer {
+  padding-top:16px;
+  margin-top:16px;
+}
+footer p {
+  color: #999;
+}
+.footer-bottom {
+  padding:16px 0;
+  margin-top:16px;
+}
+
+
+/**
+list styles
+*/
+.deals {
+  border-top: 1px solid #ddd;
+}
+.deals .vendor-logo {
+  text-align:center;
+  line-height:48px;
+}
+
+.deals ul li {
+  height:48px;
+  padding:6px 0;
+  border-bottom:1px solid #ddd;
+  *zoom: 1;
+  overflow:hidden;
+  width:456px;
+}
+.deals ul li:before, .deal-lists ul li:after {
+  display:table;
+  content: "";
+}
+.deals ul li:after {
+  clear:both;
+}
+
+.deals li .favorite{
+  line-height:48px;
+  height:48px;
+  float:left;
+  display:block;
+  width:24px;
+}
+.deals li .details {
+  float:right;
+  display:block;
+  width:420px;
+  padding:0 6px;
+}
+.deals li .details  p {
+  line-height:24px;
+}
+.deals li .details .title {
+  line-height:24px;
+  height:24px;
+  display:block;
+  overflow:hidden;
+}
+
+/**
+  These things happen FOREVER once we get into mobile land (<768px)
+
+*/
+@media only screen and (max-width: 767px) {
+  footer {
+    display:none;
+  }
+  #sidebar {
+    display:none;
+  }
+}
+
+
+/*
+ AND these things are just right in the landscape mobile world, but
+ will change again once we get to the 320px world
+*/
+@media only screen and (min-width: 600px) and (max-width: 767px) {
+
+  .container {
+    width: 576px;
+    padding:0 12px;
+  }
+  #sidebar {
+    position:relative;
+    width:576px;
+    padding:0;
+  }
+}
+
+/**
+  Android landscape mode
+
+*/
+@media only screen and (min-width: 480px) and (max-width: 599px) {
+  .container {
+    width: 456px;
+    padding:0 12px;
+  }
+  #sidebar {
+    position:relative;
+    width:456px;
+    padding:0;
+  }
+}
+
+/**
+
+*/
+@media only screen and (max-width:479px) {
+
+  .container {
+    width: 296px;
+    padding:0 12px;
+  }
+  #main {
+    width:296px;
+  }
+    .deals ul li {
+      width:296px;
+    }
+    .deals li .details {
+      width:260px;
+    }
+
+  #sidebar {
+    width:296px;
+    padding:0;
+  }
+
+
+}
