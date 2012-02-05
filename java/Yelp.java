@@ -20,6 +20,7 @@ public class Yelp {
 
 	OAuthService service;
 	Token accessToken;
+	private final String searchURL = "http://api.yelp.com/v2/search";
 
 	/**
 	 * Setup the Yelp API OAuth credentials.
@@ -45,7 +46,7 @@ public class Yelp {
 	 * @return JSON string response
 	 */
 	public String search(String term, double latitude, double longitude) {
-		OAuthRequest request = new OAuthRequest(Verb.GET, "http://api.yelp.com/v2/search");
+		OAuthRequest request = new OAuthRequest(Verb.GET, searchURL);
 		request.addQuerystringParameter("term", term);
 		request.addQuerystringParameter("ll", latitude + "," + longitude);
 		this.service.signRequest(this.accessToken, request);
@@ -58,6 +59,15 @@ public class Yelp {
 		this.service.signRequest(this.accessToken, request);
 		Response response = request.send();
 		return response.getBody();
+	}
+	
+	public String getDeals(String city){
+		OAuthRequest request = new OAuthRequest(Verb.GET, searchURL);
+		request.addQuerystringParameter("location", city);
+		request.addQuerystringParameter("deals_filter","true");
+		this.service.signRequest(this.accessToken, request);
+		Response response = request.send();
+		return response.getBody();		
 	}
 	
 }

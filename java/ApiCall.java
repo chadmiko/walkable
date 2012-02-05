@@ -27,17 +27,19 @@ public class ApiCall {
 		double lat = 41.9485056;
 		double lon = -87.6616156;
 
-		//Yelp Example
+//		//Yelp Example
 //		Yelp yelp = new Yelp(yConsumerKey, yConsumerSecret, yToken ,yTokenSecret);
-//		String response;
-//		response = yelp.search("mexican", lat, lon);
-//		response = yelp.getBusiness("uncommon-ground-chicago");
-//		System.out.println(response);
+//		String yResponse;
+//		yResponse = yelp.search("mexican", lat, lon);
+//		yResponse = yelp.getBusiness("uncommon-ground-chicago");
+//		yResponse = yelp.getDeals("Chicago");
+//		System.out.println(yResponse);
 
 		//Groupon Example
 		Groupon groupon = new Groupon(gClientID);
 		String gResponse = groupon.search("chicago");
-		System.out.println(gResponse);
+		GrouponObject obj = GrouponParse.parse(gResponse);
+		System.out.println(obj.deals[0].grid6ImageUrl);
 		
 	}
 
