@@ -9,11 +9,11 @@ import com.google.gson.GsonBuilder;
  * @author Christopher Butera
  *
  */
-public class GrouponParse {
+public class YelpParse {
 
-	public static GrouponObject parse(String json){
+	public static YelpDealObject parse(String json){
 		Gson gson = new GsonBuilder().create();
-		GrouponObject object = gson.fromJson(json, GrouponObject.class);
+		YelpDealObject object = gson.fromJson(json, YelpDealObject.class);
 		return object;
 	}
 
