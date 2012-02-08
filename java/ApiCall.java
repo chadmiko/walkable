@@ -1,4 +1,8 @@
 
+import java.io.FileWriter;
+import java.io.IOException;
+
+
 
 /**
  * 
@@ -24,24 +28,55 @@ public class ApiCall {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		double lat = 41.9485056;
-		double lon = -87.6616156;
+//		double lat = 41.9485056;
+//		double lon = -87.6616156;
 
 //		//Yelp Example
-		Yelp yelp = new Yelp(yConsumerKey, yConsumerSecret, yToken ,yTokenSecret);
-		String yResponse;
+//		Yelp yelp = new Yelp(yConsumerKey, yConsumerSecret, yToken ,yTokenSecret);
+//		String yResponse;
 //		yResponse = yelp.search("mexican", lat, lon);
 //		yResponse = yelp.getBusiness("uncommon-ground-chicago");
-		yResponse = yelp.getDeals("Chicago");
-		YelpDealObject yObj = YelpParse.parse(yResponse);
-		System.out.println(yObj.businesses[0].snippet_text);
+//		yResponse = yelp.getDeals("Chicago");
+//		YelpDealObject yObj = YelpParse.parse(yResponse);
+//		System.out.println(yObj.businesses[0].snippet_text);
 
-//		//Groupon Example
-//		Groupon groupon = new Groupon(gClientID);
-//		String gResponse = groupon.search("chicago");
-//		GrouponObject obj = GrouponParse.parse(gResponse);
-//		System.out.println(obj.deals[0].grid6ImageUrl);
+		//Groupon Example
+		Groupon groupon = new Groupon(gClientID);
+		String gResponse = groupon.search("chicago");
+//		System.out.println(gResponse);
 		
+		FileWriter writer; // I orginally used BufferedWriter - but it couldn't write everything to the file - kept creating incomplete files.
+		try { 
+			String fileName = "./groupon.json";
+			writer = new FileWriter ( fileName ) ;
+			writer.write(gResponse);
+			writer.close();
+		} catch (IOException x) {
+		    System.err.format("IOException: %s%n", x);
+		}
+
+		GrouponObject obj = GrouponParse.parse(gResponse);
+		GrouponParse.InsertGrouponData(obj);
+		System.out.println(obj.deals.length + " deals processed");
+		
+		//DB Test
+//		try{
+//			Connection conn = DatabaseUtil.getConnection();
+//			Statement stmt = conn.createStatement();
+//			String select = "Show tables";
+//			ResultSet rs = stmt.executeQuery(select);
+//			while (rs.next()){
+//				System.out.println(rs.getString(1));
+//			}
+//					
+//			
+//		} catch (SQLException e){
+//			System.out.println("Failed to make DB Connection");
+//			e.printStackTrace();
+//		} catch (ClassNotFoundException e) {
+//			System.out.println("Failed to make DB Connection");
+//			e.printStackTrace();
+//		}
 	}
 
 }

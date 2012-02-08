@@ -16,5 +16,7 @@ public class YelpParse {
 		YelpDealObject object = gson.fromJson(json, YelpDealObject.class);
 		return object;
 	}
+	
+	
 
 }

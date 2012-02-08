@@ -1,9 +1,6 @@
-import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.OAuthRequest;
 import org.scribe.model.Response;
-import org.scribe.model.Token;
 import org.scribe.model.Verb;
-import org.scribe.oauth.OAuthService;
 
 
 /**
@@ -20,7 +17,7 @@ public class Groupon {
 	//OAuthService service;
 	//Token accessToken;
 	private String clientID;
-	private final String format = ".json";
+	//private final String format = ".json";
 
 	/**
 	 * Setup the Yelp API OAuth credentials.
