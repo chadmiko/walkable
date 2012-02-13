@@ -15,33 +15,33 @@ import java.sql.Statement;
 public class Location {
 
 	private int lid; // Location ID
-	private int mid; // Merchant ID
 	private String street;
 	private String street2;
 	private String neighborhood;
 	private String zip;
 	private double lat;
 	private double lng;
+	private String name;
+	private String url;
 
 	//This function will return the lid (Location ID)
-	public int insertLocation(){
+	public int insertLocation(Connection conn){
 		int lid=0;
 		String insertLocations = "INSERT INTO locations "
-				+ "(mid, street, street2, neighborhood, zip, lat, lng)"
-				+ "VALUES(?, ?, ?, ?, ?, ?, ?)";
-		Connection conn = null;
+				+ "(street, street2, neighborhood, zip, lat, lng, name, url)"
+				+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			conn = DatabaseUtil.getConnection();
 			ps = conn.prepareStatement(insertLocations, Statement.RETURN_GENERATED_KEYS);
-			ps.setInt(1, this.mid);
-			ps.setString(2, this.street);
-			ps.setString(3, this.street2);
-			ps.setString(4, this.neighborhood);
-			ps.setString(5, this.zip);
-			ps.setDouble(6, this.lat);
-			ps.setDouble(7, this.lng);
+			ps.setString(1, this.street);
+			ps.setString(2, this.street2);
+			ps.setString(3, this.neighborhood);
+			ps.setString(4, this.zip);
+			ps.setDouble(5, this.lat);
+			ps.setDouble(6, this.lng);
+			ps.setString(7, this.name);
+			ps.setString(8, this.url);			
 			ps.executeUpdate();
 			
 		    rs = ps.getGeneratedKeys();
@@ -56,6 +56,7 @@ public class Location {
 			//System.out.println("Found Duplicate");
 			
 		} catch (SQLException e) {
+			System.out.println(ps.toString());
 			e.printStackTrace();
 		} finally {
           if (rs != null) {
@@ -66,11 +67,6 @@ public class Location {
           if (ps != null) {
               try {
                   ps.close();
-              } catch (SQLException e) { /*ignored*/ }
-          }
-          if (conn != null) {
-              try {
-                  conn.close();
               } catch (SQLException e) { /*ignored*/ }
           }
 		}
@@ -84,14 +80,6 @@ public class Location {
 
 	public void setLid(int lid) {
 		this.lid = lid;
-	}
-
-	public int getMid() {
-		return mid;
-	}
-
-	public void setMid(int mid) {
-		this.mid = mid;
 	}
 
 	public String getStreet() {
@@ -140,6 +128,22 @@ public class Location {
 
 	public void setLng(double lng) {
 		this.lng = lng;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
 	}	
 
 }

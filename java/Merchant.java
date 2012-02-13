@@ -3,6 +3,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 /**
  * 
@@ -17,25 +18,27 @@ public class Merchant {
 	private int mid;
 	private String name;
 	private String url;
-	private String groupon_id;
 	private String yelp_id;
+	
+	private ArrayList<Location> locations;
+	
+	public void addLocation(Location l){
+		locations.add(l);
+	}
 
 	//This function will return the mid (Merchant ID)
-	public int insertMerchant(){
+	public int insertMerchant(Connection conn){
 		String insertMerchant = "INSERT INTO merchants " 
-				+ "(name, url, groupon_id, yelp_id) "
+				+ "(name, url, yelp_id) "
 				+ "VALUES(?, ?, ?, ?)";
 
-		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
 		try {
-			conn = DatabaseUtil.getConnection();
 			ps = conn.prepareStatement(insertMerchant, Statement.RETURN_GENERATED_KEYS);
 			ps.setString(1, this.name);
 			ps.setString(2, this.url);
-			ps.setString(3, this.groupon_id);
 			ps.setString(4, this.yelp_id);
 			ps.executeUpdate();
 			rs = ps.getGeneratedKeys();
@@ -58,11 +61,6 @@ public class Merchant {
 			if (ps != null) {
 				try {
 					ps.close();
-				} catch (SQLException e) { /*ignored*/ }
-			}
-			if (conn != null) {
-				try {
-					conn.close();
 				} catch (SQLException e) { /*ignored*/ }
 			}
 		}
@@ -91,14 +89,6 @@ public class Merchant {
 
 	public void setUrl(String url) {
 		this.url = url;
-	}
-
-	public String getGroupon_id() {
-		return groupon_id;
-	}
-
-	public void setGroupon_id(String groupon_id) {
-		this.groupon_id = groupon_id;
 	}
 
 	public String getYelp_id() {

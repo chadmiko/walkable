@@ -54,6 +54,16 @@ public class Yelp {
 		return response.getBody();
 	}
 
+	public String search(String city, String offset) {
+		OAuthRequest request = new OAuthRequest(Verb.GET, searchURL);
+		request.addQuerystringParameter("location", city);
+		request.addQuerystringParameter("offset", offset);
+		this.service.signRequest(this.accessToken, request);
+		Response response = request.send();
+		return response.getBody();
+	}
+
+
 	public String getBusiness(String id){
 		OAuthRequest request = new OAuthRequest(Verb.GET, "http://api.yelp.com/v2/business/" + id + "?");
 		this.service.signRequest(this.accessToken, request);
