@@ -1,3 +1,5 @@
+package me.walkable.groupon;
+
 /**
  * 
  */

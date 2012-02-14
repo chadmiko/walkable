@@ -1,3 +1,5 @@
+package me.walkable.yelp;
+
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.OAuthRequest;
 import org.scribe.model.Response;

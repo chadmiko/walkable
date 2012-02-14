@@ -1,6 +1,4 @@
-/**
- * 
- */
+package me.walkable.yelp;
 
 /**
  * @author Christopher Butera

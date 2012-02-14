@@ -1,3 +1,5 @@
+package me.walkable.groupon;
+
 import org.scribe.model.OAuthRequest;
 import org.scribe.model.Response;
 import org.scribe.model.Verb;

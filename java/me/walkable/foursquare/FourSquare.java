@@ -1,3 +1,5 @@
+package me.walkable.foursquare;
+
 import java.util.Scanner;
 
 import org.scribe.builder.api.Foursquare2Api;

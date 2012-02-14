@@ -1,3 +1,5 @@
+package me.walkable.yelp;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
