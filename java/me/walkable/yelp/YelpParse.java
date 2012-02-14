@@ -2,9 +2,9 @@ package me.walkable.yelp;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import me.walkable.db.*;
 
 /**
  * 

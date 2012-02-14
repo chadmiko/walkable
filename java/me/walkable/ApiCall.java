@@ -2,8 +2,9 @@ package me.walkable;
 
 import java.io.FileWriter;
 import java.io.IOException;
-
-
+import me.walkable.foursquare.*;
+import me.walkable.groupon.*;
+import me.walkable.yelp.*;
 
 /**
  * 
