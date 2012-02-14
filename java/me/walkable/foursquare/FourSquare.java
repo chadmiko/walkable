@@ -26,7 +26,7 @@ public class FourSquare {
 	Token accessToken;
 	private static final String SEARCH_URL = "https://api.foursquare.com/v2/specials/search";
 	private static final Token EMPTY_TOKEN = null;
-	private static String token = "EI2VRYZAIKGRSP1C3N21ITXEG4CGUIR1AUXDCZLEMIBYUMH0";
+//	private static String token = "EI2VRYZAIKGRSP1C3N21ITXEG4CGUIR1AUXDCZLEMIBYUMH0";
 //	private static String tokenSecret = "";
 	
 	private String clientID;
