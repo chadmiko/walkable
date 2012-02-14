@@ -6,28 +6,36 @@ package me.walkable.yelp;
  */
 public class YelpDealObject {
 
-	public class YelpRegion {
-		public class YelpSpan{
-			public double latitude_delta;
-			public double longitude_delta;
+	protected class YelpRegion {
+		protected class YelpSpan{
+			protected double latitude_delta;
+			protected double longitude_delta;
 			YelpSpan(){};
 		}
 		
-		public class YelpCenter{
-			public double latitude;
-			public double longitude;
+		protected class YelpCenter{
+			protected double latitude;
+			protected double longitude;
 			YelpCenter(){};
 		}
 		
-		public YelpSpan span;
-		public YelpCenter center;
+		protected YelpSpan span;
+		protected YelpCenter center;
 		YelpRegion(){};
 	}
 	
-	public YelpRegion region;
-	public int total;
-	public YelpDealData[] businesses;
+	protected YelpRegion region;
+	protected int total;
+	protected YelpDealData[] businesses;
 	
 	YelpDealObject(){};
+	
+	public int getNumberOfDeals(){
+		return businesses.length;
+	}
+	
+	public int getTotalNumberOfDeals(){
+		return total;
+	}
 }
 

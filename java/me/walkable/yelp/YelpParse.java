@@ -1,7 +1,10 @@
 package me.walkable.yelp;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import me.walkable.db.*;
@@ -30,15 +33,44 @@ public class YelpParse {
 		try {
 			conn = DatabaseUtil.getConnection();
 
-			for (YelpDealData deal : deals){
-//				Merchant merchant = new Merchant();
-//				merchant.setName(deal.name);
-////				merchant.setUrl(deal.url);  NO URL Provided by Yelp
-//				merchant.setYelp_id(deal.id);
-//
-//				int mid = merchant.insertMerchant(conn);
+			for (YelpDealData yDeals : deals){
+				DealByLocation dealByLocation = new DealByLocation();
+				int did=0;
+				int lid=0;
+				int numDeals = 0;
+				int numOptions=0;
+				for (YelpDealData.YelpDeal yDeal : yDeals.deals){
+					for (YelpDealData.YelpDeal.YelpOptions yOption : yDeal.options){
 
-				YelpDealData.YelpLocation yLoc = deal.location;
+						Deal deal = new Deal();
+						deal.setVendor(deal.VENDOR_YELP);
+						deal.setTitle(yDeal.what_you_get);
+						deal.setLink_url(yOption.purchase_url);
+						Timestamp startDate = new Timestamp(yDeal.time_start * 1000);
+//						startDate.setTime(yDeal.time_start);
+						deal.setStart_date(startDate);
+//						System.out.println(yDeal.time_start + ": " + new java.util.Date().getTime());
+						//				deal.setEnd_date(end_date)  Yelp Provides no enddate
+						deal.setActive(true);
+						if (yOption.is_quantity_limited)
+							deal.setRemaining_quantity(yOption.remaining_count);
+						else
+							deal.setRemaining_quantity(Deal.REMAINING_QUANTITY_UNLIMITED);
+						deal.setPrice(new Double(yOption.price).doubleValue() / 100.00);
+						deal.setValue(new Double(yOption.original_price).doubleValue() / 100.00);
+						deal.setDiscount( 1 - (deal.getPrice() / deal.getValue()));
+						did = deal.insertDeal(conn);
+						dealByLocation.setDid(did);
+						++numOptions;
+					}
+					++numDeals;
+				}
+				if (numDeals > 1)
+					System.out.println("Found " + numDeals + " within Yelp Deal Object");
+				if (numOptions > 1)
+					System.out.println("Found " + numOptions + " within Yelp Deal Object");
+				
+				YelpDealData.YelpLocation yLoc = yDeals.location;
 				Location location = new Location();
 				//Parse Yelp Address ToDo
 				if (yLoc.display_address.length > 0) {
@@ -54,9 +86,13 @@ public class YelpParse {
 				//				location.setZip(yLoc.); //Zip unfortunately is encoded with display address
 				location.setLat(yLoc.coordinate.latitude);
 				location.setLng(yLoc.coordinate.longitude);
-				location.setName(deal.name);
+				location.setName(yDeals.name);
 				//No URL Provided by Yelp
-				location.insertLocation(conn);
+				lid = location.insertLocation(conn);
+				dealByLocation.setLid(lid);
+				dealByLocation.insertDealByLocation(conn);
+				
+				
 			}
 
 

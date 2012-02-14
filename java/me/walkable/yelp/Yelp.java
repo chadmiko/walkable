@@ -7,6 +7,9 @@ import org.scribe.model.Token;
 import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 /**
  * 
  */
@@ -73,10 +76,26 @@ public class Yelp {
 		return response.getBody();
 	}
 	
-	public String getDeals(String city){
+	public int getNumberofDeals(String city){
 		OAuthRequest request = new OAuthRequest(Verb.GET, searchURL);
 		request.addQuerystringParameter("location", city);
 		request.addQuerystringParameter("deals_filter","true");
+		this.service.signRequest(this.accessToken, request);
+		Response response = request.send();
+		Gson gson = new GsonBuilder().create();
+		YelpDealObject object = gson.fromJson(response.getBody(), YelpDealObject.class);
+//		return response.getBody();
+		return object.getTotalNumberOfDeals();
+	}
+	
+	//http://www.yelp.com/developers/documentation/v2/search_api
+	public String getDeals(String city, String offset){
+		OAuthRequest request = new OAuthRequest(Verb.GET, searchURL);
+		request.addQuerystringParameter("location", city);
+		request.addQuerystringParameter("deals_filter","true");
+		request.addQuerystringParameter("limit", "20"); //This is the max
+		request.addQuerystringParameter("sort", "1"); //Sort mode: 0=Best matched (default), 1=Distance, 2=Highest Rated.
+		request.addQuerystringParameter("offset", offset);
 		this.service.signRequest(this.accessToken, request);
 		Response response = request.send();
 		return response.getBody();		

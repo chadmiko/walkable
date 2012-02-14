@@ -6,70 +6,71 @@ package me.walkable.yelp;
  */
 public class YelpDealData {
 
-	public class YelpDeal{
-		public class YelpOptions{
-			public int original_price;
-			public String title;
-			public int price;
-			public String purchase_url;
-			public String formatted_original_price;
-			public String formatted_price;
-			public boolean is_quantity_limited;
+	protected class YelpDeal{
+		protected class YelpOptions{
+			protected int original_price;
+			protected String title;
+			protected int price;
+			protected String purchase_url;
+			protected String formatted_original_price;
+			protected String formatted_price;
+			protected int remaining_count;
+			protected boolean is_quantity_limited;
 			YelpOptions(){};
 		}
 		//End YelpOptions object
 		
-		public String what_you_get;
-		public int time_start;
-		public String title;
-		public String url;
-		public YelpOptions[] options;
+		protected String what_you_get;
+		protected long time_start;
+		protected String title;
+		protected String url;
+		protected YelpOptions[] options;
 		
-		public String image_url;
-		public String special_terms;
-		public String id;
-		public String currency_code;
+		protected String image_url;
+		protected String special_terms;
+		protected String id;
+		protected String currency_code;
 		
 		YelpDeal(){};
 	}
 	//End YelpDeal object
 		
-	public class YelpLocation{
-		public class YelpCoordinate{
-			public double latitude;
-			public double longitude;
+	protected class YelpLocation{
+		protected class YelpCoordinate{
+			protected double latitude;
+			protected double longitude;
 			YelpCoordinate(){};
 		}
 		
-		public String city;
-		public String[] display_address;
-		public int geo_accuracy;
-		public String country_code;
-		public String[] address;
-		public YelpCoordinate coordinate;
+		protected String city;
+		protected String[] display_address;
+		protected int geo_accuracy;
+		protected String country_code;
+		protected String[] address;
+		protected YelpCoordinate coordinate;
 
-		public String state_code;
+		protected String state_code;
 		
 		YelpLocation(){};
 	}
 	
-	public double rating;
-	public String mobile_url;
-	public String rating_img_url;
-	public int review_count;
-	public String name;
-	public String rating_img_url_small;
-	public String url;
-	public YelpDeal[] deals;
+	protected double rating;
+	protected String mobile_url;
+	protected String rating_img_url;
+	protected int review_count;
+	protected String name;
+	protected String rating_img_url_small;
+	protected String url;
+	protected YelpDeal[] deals;
 	
-	public String phone;
-	public String snippet_text;
-	public String snippet_image_url;
-	public String display_phone;
-	public String rating_img_url_large;
-	public String id;
-	public String[][] categories;
-	public YelpLocation location;
+	protected String phone;
+	protected String snippet_text;
+	protected String snippet_image_url;
+	protected String display_phone;
+	protected String rating_img_url_large;
+	protected String id;
+	protected String[][] categories;
+	protected YelpLocation location;
 	
 	YelpDealData(){};
 }

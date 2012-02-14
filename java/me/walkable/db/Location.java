@@ -55,7 +55,7 @@ public class Location {
 		    }
 		} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException e) {
 			//Ignore Duplicate
-			//System.out.println("Found Duplicate");
+			System.out.println("Found Duplicate Location");
 			
 		} catch (SQLException e) {
 			System.out.println(ps.toString());
