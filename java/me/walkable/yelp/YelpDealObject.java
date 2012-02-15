@@ -31,7 +31,10 @@ public class YelpDealObject {
 	YelpDealObject(){};
 	
 	public int getNumberOfDeals(){
-		return businesses.length;
+		if (businesses != null)
+			return businesses.length;
+		else
+			return 0;
 	}
 	
 	public int getTotalNumberOfDeals(){
