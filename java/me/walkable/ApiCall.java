@@ -161,13 +161,13 @@ public class ApiCall {
 
 	public static void main(String[] args) {
 
-		try {
-			getYelp();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//		getGroupon();
+//		try {
+//			getYelp();
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+				getGroupon();
 		//		getFourSquare();
 
 

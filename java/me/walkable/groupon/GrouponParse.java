@@ -2,6 +2,8 @@ package me.walkable.groupon;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import me.walkable.db.*;
@@ -30,36 +32,31 @@ public class GrouponParse {
 		try {
 			conn = DatabaseUtil.getConnection();
 
-			for (GrouponData deal : deals){
-//				Merchant merchant = new Merchant();
-//				merchant.setName(deal.merchant.name);
-//				merchant.setUrl(deal.merchant.websiteUrl);
-//				merchant.setGroupon_id(deal.id);
+			for (GrouponData dealData : deals){
 
-				//This is sometimes a yelp ID
-//				if (deal.merchant.ratings.length > 0) {
-//					if (deal.merchant.ratings[0].linkText.equals("Yelp")){
-//						String url = deal.merchant.ratings[0].url;
-//						int lastSlash = url.lastIndexOf("/");
-//						if (lastSlash <= 0){
-//							System.out.println("Error getting Yelp ID");
-//						}
-//						else {
-//							String yelpID = url.substring(lastSlash+1, url.length());
-//							merchant.setYelp_id(yelpID);
-//						}
-//					}
-//					else {
-//						System.out.println("Ratings from " + deal.merchant.ratings[0].linkText);
-//					}
-//				}
-//				else {
-//					//System.out.println("No Ratings Data in Groupon Deal");
-//				}
-//
-//				int mid = merchant.insertMerchant(conn);
+				for (GrouponData.GrouponOptions opt : dealData.options){
 
-				for (GrouponData.GrouponOptions opt : deal.options){
+					//Parse Groupon Date format 
+					//      "startAt": "2012-02-12T06:00:48Z" 
+					int t = dealData.startAt.indexOf('T');
+					int z = dealData.startAt.indexOf('Z');
+					String startTime = dealData.startAt.substring(0, t) + " " + dealData.startAt.substring(t+1,  z);
+					String endTime = dealData.endAt.substring(0, t) + " " + dealData.endAt.substring(t+1,  z);
+
+					Deal deal = new Deal();
+					deal.setVendor(Deal.VENDOR_GROUPON);
+					deal.setTitle(dealData.announcementTitle);
+					deal.setLink_url(dealData.dealUrl);
+					deal.setStart_date(Timestamp.valueOf(startTime));
+					deal.setEnd_date(Timestamp.valueOf(endTime));
+					deal.setActive(true);
+					if (opt.isLimitedQuantity)
+						deal.setRemaining_quantity(opt.remainingQuantity);
+					deal.setPrice(new Double(opt.price.amount).doubleValue() / 100.00 ); //Shift decimal
+					deal.setValue(new Double(opt.value.amount).doubleValue() / 100.00 ); //Shift decimal
+					deal.setDiscount( 1 - (deal.getPrice() / deal.getValue()));
+					int did = deal.insertDeal(conn);
+
 					for (GrouponData.GrouponLocation gLoc : opt.redemptionLocations){
 						//Pass mid into location
 						Location location = new Location();
@@ -69,9 +66,15 @@ public class GrouponParse {
 						location.setZip(gLoc.postalCode);
 						location.setLat(gLoc.lat);
 						location.setLng(gLoc.lng);
-						location.setName(deal.merchant.name);
-						location.setUrl(deal.merchant.websiteUrl);
-						location.insertLocation(conn);
+						location.setName(dealData.merchant.name);
+						location.setUrl(dealData.merchant.websiteUrl);
+						int lid = location.insertLocation(conn);
+						DealByLocation dealByLocation = new DealByLocation();
+						if (lid > 0){
+							dealByLocation.setDid(did);
+							dealByLocation.setLid(lid);
+							dealByLocation.insertDealByLocation(conn);
+						}
 					}
 
 				}

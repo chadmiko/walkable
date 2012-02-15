@@ -11,6 +11,9 @@ import me.walkable.util.CategoryTree;
  * @author Christopher Butera
  *
  */
+
+//http://www.yelp.com/developers/documentation/category_list
+
 public class YelpCategory {
 
 	public CategoryTree yelpCategories;

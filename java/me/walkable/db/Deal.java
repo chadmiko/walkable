@@ -23,7 +23,7 @@ public class Deal {
 	private String title;
 	private String link_url;
 	private Timestamp start_date;
-	private Date end_date;
+	private Timestamp end_date;
 	private boolean active;
 	private int remaining_quantity;
 	private double price;
@@ -52,7 +52,7 @@ public class Deal {
 			ps.setString(++x, this.title);
 			ps.setString(++x, this.link_url);
 			ps.setTimestamp(++x, this.start_date);
-			ps.setDate(++x, this.end_date);
+			ps.setTimestamp(++x, this.end_date);
 			ps.setBoolean(++x, this.active);
 			ps.setInt(++x, this.remaining_quantity);
 			ps.setDouble(++x, this.price);
@@ -70,6 +70,7 @@ public class Deal {
 		} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException e) {
 			//Ignore Duplicate
 //			System.err.println("Found Duplicate Deal");
+			did = findDeal(conn);
 			
 		} catch (SQLException e) {
 			System.out.println(ps.toString());
@@ -90,6 +91,45 @@ public class Deal {
 			return did;
 	}
 
+	private int findDeal(Connection conn){
+		int did=0;
+		String findLocation = "SELECT did " 
+				+ "FROM deals d "
+				+ "WHERE d.link_url = ? ";
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = conn.prepareStatement(findLocation, Statement.RETURN_GENERATED_KEYS);
+			ps.setString(1, this.link_url);
+			rs = ps.executeQuery();
+			
+		    if (rs.next()) {
+		        did = rs.getInt(1);
+		    } else {
+		    	throw new SQLException("Failed to find duplicate did");
+		        // throw an exception from here
+		    }
+		} catch (SQLException e) {
+			System.out.println(ps.toString());
+			e.printStackTrace();
+		} finally {
+          if (rs != null) {
+              try {
+                  rs.close();
+              } catch (SQLException e) { /*ignored*/ }
+          }
+          if (ps != null) {
+              try {
+                  ps.close();
+              } catch (SQLException e) { /*ignored*/ }
+          }
+		}
+
+			return did;
+
+	}
+
+	
 	public int getDid() {
 		return did;
 	}
@@ -122,12 +162,12 @@ public class Deal {
 		this.link_url = link_url;
 	}
 
-	public Date getEnd_date() {
+	public Timestamp getEnd_date() {
 		return end_date;
 	}
 
-	public void setEnd_date(Date end_date) {
-		this.end_date = end_date;
+	public void setEnd_date(Timestamp timestamp) {
+		this.end_date = timestamp;
 	}
 
 	public boolean isActive() {

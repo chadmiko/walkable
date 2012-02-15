@@ -55,7 +55,8 @@ public class Location {
 		    }
 		} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException e) {
 			//Ignore Duplicate
-			System.err.println("Found Duplicate Location");
+//			System.err.println("Found Duplicate Location");
+			lid = findLocation(conn);
 			
 		} catch (SQLException e) {
 			System.out.println(ps.toString());
@@ -76,6 +77,46 @@ public class Location {
 			return lid;
 	}
 
+	private int findLocation(Connection conn){
+		int lid=0;
+		String findLocation = "SELECT lid " 
+				+ "FROM locations l "
+				+ "WHERE l.lat = ? "
+				+ "AND l.lng = ? ";
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			ps = conn.prepareStatement(findLocation, Statement.RETURN_GENERATED_KEYS);
+			ps.setDouble(1, this.lat);
+			ps.setDouble(2, this.lng);
+			rs = ps.executeQuery();
+			
+		    if (rs.next()) {
+		        lid = rs.getInt(1);
+		    } else {
+		    	throw new SQLException("Failed to find duplicate lid");
+		        // throw an exception from here
+		    }
+		} catch (SQLException e) {
+			System.out.println(ps.toString());
+			e.printStackTrace();
+		} finally {
+          if (rs != null) {
+              try {
+                  rs.close();
+              } catch (SQLException e) { /*ignored*/ }
+          }
+          if (ps != null) {
+              try {
+                  ps.close();
+              } catch (SQLException e) { /*ignored*/ }
+          }
+		}
+
+			return lid;
+
+	}
+	
 	public int getLid() {
 		return lid;
 	}
