@@ -1,0 +1,22 @@
+!!! 5
+/[if lt IE 7] <html class="no-js ie6" lang="en">
+/[if IE 7] <html class="no-js ie7" lang="en">
+/[if IE 8] <html class="no-js ie8" lang="en">
+<!--[if (gt IE 8)]<html lang="en" class="no-js"><![endif]-->
+
+%head
+  %meta{:charset => "utf-8"}
+  %meta{:content => "IE=edge,chrome=1", "http-equiv" => "X-UA-Compatible"}
+  %title= @title || "Some title"
+  %meta{:content => "width=device-width,initial-scale=1", :name => "viewport"}
+
+%body
+  #container
+    %header
+
+    #main{:role => "main"}
+      %section
+        = yield
+    %footer
+
+</html>

@@ -1,0 +1,8 @@
+%h2 
+  Deals
+  %ul.deals
+    - if @deals.empty?
+      %li 
+        No deals
+    - else
+      = partial 'deal', :collection => @deals, :engine => :haml
