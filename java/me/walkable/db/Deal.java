@@ -1,7 +1,6 @@
 package me.walkable.db;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,7 +23,7 @@ public class Deal {
 	private String link_url;
 	private Timestamp start_date;
 	private Timestamp end_date;
-	private boolean active;
+	private int offset;
 	private int remaining_quantity;
 	private double price;
 	private double value;
@@ -53,7 +52,7 @@ public class Deal {
 			ps.setString(++x, this.link_url);
 			ps.setTimestamp(++x, this.start_date);
 			ps.setTimestamp(++x, this.end_date);
-			ps.setBoolean(++x, this.active);
+			ps.setInt(++x, this.offset);
 			ps.setInt(++x, this.remaining_quantity);
 			ps.setDouble(++x, this.price);
 			ps.setDouble(++x, this.value);
@@ -169,13 +168,13 @@ public class Deal {
 	public void setEnd_date(Timestamp timestamp) {
 		this.end_date = timestamp;
 	}
-
-	public boolean isActive() {
-		return active;
+	
+	public int getOffset() {
+		return offset;
 	}
 
-	public void setActive(boolean active) {
-		this.active = active;
+	public void setOffset(int offset) {
+		this.offset = offset;
 	}
 
 	public double getPrice() {

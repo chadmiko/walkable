@@ -49,7 +49,7 @@ public class GrouponParse {
 					deal.setLink_url(dealData.dealUrl);
 					deal.setStart_date(Timestamp.valueOf(startTime));
 					deal.setEnd_date(Timestamp.valueOf(endTime));
-					deal.setActive(true);
+					deal.setOffset(dealData.division.timezoneOffsetInSeconds);
 					if (opt.isLimitedQuantity)
 						deal.setRemaining_quantity(opt.remainingQuantity);
 					deal.setPrice(new Double(opt.price.amount).doubleValue() / 100.00 ); //Shift decimal
