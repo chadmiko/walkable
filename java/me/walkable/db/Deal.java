@@ -39,7 +39,7 @@ public class Deal {
 	public int insertDeal(Connection conn){
 		int did=0;
 		String insertDeal = "INSERT INTO deals "
-				+ "(vendor, title, link_url, start_date, end_date, active, remaining_quantity, price, value, discount) "
+				+ "(vendor, title, link_url, start_date, end_date, offset, remaining_quantity, price, value, discount) "
 				+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		PreparedStatement ps = null;
 		ResultSet rs = null;
