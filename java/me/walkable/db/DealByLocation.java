@@ -19,37 +19,24 @@ public class DealByLocation {
 	private int lid; // Location ID
 
 	public void insertDealByLocation(Connection conn){
-		String insertDealByLocation = "INSERT INTO deal_by_location "
+		String insertDealByLocation = "INSERT INTO deal_locations "
 				+ "(did, lid) "
 				+ "VALUES(?, ?)";
 		PreparedStatement ps = null;
-//		ResultSet rs = null;
 		try {
 			ps = conn.prepareStatement(insertDealByLocation, Statement.RETURN_GENERATED_KEYS);
 			ps.setInt(1, this.did);
 			ps.setInt(2, this.lid);
 			ps.executeUpdate();
 			
-//		    rs = ps.getGeneratedKeys();
-//		    if (rs.next()) {
-//		        lid = rs.getInt(1);
-//		    } else {
-//		    	throw new SQLException("Failed to insert");
-//		        // throw an exception from here
-//		    }
 		} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException e) {
 			//Ignore Duplicate
-			System.out.println("Found Duplicate Deal By Location");
+			System.out.println("Found Duplicate Deal By Location.  DID=" + this.did + " LID=" + this.lid);
 			
 		} catch (SQLException e) {
 			System.out.println(ps.toString());
 			e.printStackTrace();
 		} finally {
-//          if (rs != null) {
-//              try {
-//                  rs.close();
-//              } catch (SQLException e) { /*ignored*/ }
-//          }
           if (ps != null) {
               try {
                   ps.close();

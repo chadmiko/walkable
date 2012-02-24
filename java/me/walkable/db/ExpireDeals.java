@@ -16,25 +16,39 @@ import java.sql.Statement;
 public class ExpireDeals {
 
 	public static void expireDeals(Connection conn){
-		String insertDealHistory = "INSERT INTO deal_history "
-				+ "(SELECT did, vendor, title, link_url, start_date, end_date, offset, remaining_quantity, price, value, discount, updated_at "
+		String insertDealHistory = "INSERT INTO deals_history "
+				+ "(SELECT did, vendor, title, link_url, start_date, end_date, utc_offset, updated_at, items "
 				+ "FROM deals "
 				+ "WHERE UTC_TIMESTAMP > end_date ) ";
+		String insertDealByLocations = "INSERT INTO deal_locations_history "
+				+ "(SELECT dl.did, dl.lid "
+				+ "FROM deals d, deal_locations dl "
+				+ "WHERE UTC_TIMESTAMP > d.end_date ) ";
 		String deleteDealHistory = "DELETE FROM deals "
 				+ "WHERE did IN "
 				+ "(SELECT did "
 				+ "FROM deal_history) ";
+		String deleteDealByLocationHistory = "DELETE FROM deal_locations "
+				+ "WHERE did IN "
+				+ "(SELECT did "
+				+ "FROM deal_history) ";		
+		
+		
 		
 		PreparedStatement ps = null;
 		try {
-			ps = conn.prepareStatement(insertDealHistory, Statement.RETURN_GENERATED_KEYS);
+			ps = conn.prepareStatement(insertDealHistory);
 			ps.executeUpdate();
-			ps = conn.prepareStatement(deleteDealHistory, Statement.RETURN_GENERATED_KEYS);
+			ps = conn.prepareStatement(insertDealByLocations);
+			ps.executeUpdate();			
+			ps = conn.prepareStatement(deleteDealHistory);
+			ps.executeUpdate();			
+			ps = conn.prepareStatement(deleteDealByLocationHistory);
 			ps.executeUpdate();			
 			
-		} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException e) {
-			//Ignore Duplicate
-			//			System.err.println("Found Duplicate Location");
+//		} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException e) {
+//			//Ignore Duplicate
+//			//			System.err.println("Found Duplicate Location");
 
 		} catch (SQLException e) {
 			System.out.println(ps.toString());
