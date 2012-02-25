@@ -39,24 +39,26 @@ public class YelpParse {
 					int lid=0;
 					int numDeals = 0;
 					int numOptions=0;
+					if (yDeals == null)
+						break;
 					for (YelpDealData.YelpDeal yDeal : yDeals.deals){
 						for (YelpDealData.YelpDeal.YelpOptions yOption : yDeal.options){
 
 							Deal deal = new Deal();
 							deal.setVendor(Deal.VENDOR_YELP);
 							//Parse Title
-							String title = yDeal.what_you_get;
-							if (title.contains("\n")){
-								title = title.substring(0, title.indexOf('\n'));
-							}
-							deal.setTitle(title);
+//							String title = yDeal.what_you_get;
+//							if (title.contains("\n")){
+//								title = title.substring(0, title.indexOf('\n'));
+//							}
+//							deal.setTitle(title);
+							deal.setTitle(yOption.title);
 							deal.setLink_url(yOption.purchase_url);
 							Timestamp startDate = new Timestamp(yDeal.time_start * 1000);
 							//						startDate.setTime(yDeal.time_start);
 							deal.setStart_date(startDate);
 							//						System.out.println(yDeal.time_start + ": " + new java.util.Date().getTime());
 							//				deal.setEnd_date(end_date)  Yelp Provides no enddate
-							deal.setActive(true);
 							if (yOption.is_quantity_limited)
 								deal.setRemaining_quantity(yOption.remaining_count);
 							else

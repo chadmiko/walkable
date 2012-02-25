@@ -84,7 +84,7 @@ public class Deal {
 		    }
 		} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException e) {
 			//Ignore Duplicate
-			System.err.println("Found Duplicate Deal... Updating");
+			//System.err.println("Found Duplicate Deal... Updating");
 			did = findDeal(conn);
 			updateDeal(conn, did);
 			

@@ -125,6 +125,7 @@ public class Yelp {
 		request.addQuerystringParameter("offset", offset);
 		this.service.signRequest(this.accessToken, request);
 		Response response = request.send();
+//		System.out.println(response.getBody());
 		return YelpParse.parse(response.getBody());		
 	}
 

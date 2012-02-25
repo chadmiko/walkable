@@ -27,8 +27,8 @@ public class Location {
 	private String url;
 	// Convert deg to Radians
 	private double sinLat; // sin (radians(lat))
-	private double cosCos; // cos (radians(lat)) * cos(radians(lng))
-	private double cosSin; // cos (radians(lat)) * sin (radians(lng))
+	private double radLng; // radians(lng)
+	private double cosLat; // cos (radians(lat))
 	
 	//This function will return the lid (Location ID)
 	public int insertLocation(Connection conn){
@@ -38,7 +38,7 @@ public class Location {
 
 		int lid=0;
 		String insertLocations = "INSERT INTO locations "
-				+ "(street, street2, neighborhood, zip, lat, lng, name, url, sin_lat, cos_cos, cos_sin)"
+				+ "(street, street2, neighborhood, zip, lat, lng, name, url, sin_lat, rad_lng, cos_lat)"
 				+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -54,8 +54,8 @@ public class Location {
 			ps.setString(x++, this.name);
 			ps.setString(x++, this.url);
 			ps.setDouble(x++, this.sinLat);
-			ps.setDouble(x++, this.cosCos);
-			ps.setDouble(x++, this.cosSin);
+			ps.setDouble(x++, this.radLng);
+			ps.setDouble(x++, this.cosLat);
 			ps.executeUpdate();
 			
 		    rs = ps.getGeneratedKeys();
@@ -131,13 +131,13 @@ public class Location {
 	
 	public void calculateSinCos(){
 		double sinLat = Math.sin(Math.toRadians(this.lat));		
-		double sinLng = Math.sin(Math.toRadians(this.lng));		
+//		double sinLng = Math.sin(Math.toRadians(this.lng));		
 		double cosLat = Math.cos(Math.toRadians(this.lat));
-		double cosLng = Math.cos(Math.toRadians(this.lng));
+//		double cosLng = Math.cos(Math.toRadians(this.lng));
 		
 		this.sinLat = sinLat;
-		this.cosCos = cosLat * cosLng;
-		this.cosSin = cosLat * sinLng;
+		this.radLng = Math.toRadians(this.lng);
+		this.cosLat = cosLat;
 		
 	}
 	
@@ -212,29 +212,5 @@ public class Location {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-
-	public double getSinLat() {
-		return sinLat;
-	}
-
-	public void setSinLat(double sinLat) {
-		this.sinLat = sinLat;
-	}
-
-	public double getCosCos() {
-		return cosCos;
-	}
-
-	public void setCosCos(double cosCos) {
-		this.cosCos = cosCos;
-	}
-
-	public double getCosSin() {
-		return cosSin;
-	}
-
-	public void setCosSin(double cosSin) {
-		this.cosSin = cosSin;
-	}	
 
 }

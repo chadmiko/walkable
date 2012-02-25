@@ -160,13 +160,15 @@ public class ApiCall {
 	}
 
 	public static void main(String[] args) {
-
-//		try {
-//			getYelp();
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+//		Yelp yelp = new Yelp(yConsumerKey, yConsumerSecret, yToken ,yTokenSecret);
+//		YelpDealObject yObj = yelp.getDeals(Yelp.CHICAGO, "0", "danceclubs");
+		
+		try {
+			getYelp();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 				getGroupon();
 		//		getFourSquare();
 

@@ -31,7 +31,7 @@ public class DealByLocation {
 			
 		} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException e) {
 			//Ignore Duplicate
-			System.out.println("Found Duplicate Deal By Location.  DID=" + this.did + " LID=" + this.lid);
+			//System.out.println("Found Duplicate Deal By Location.  DID=" + this.did + " LID=" + this.lid);
 			
 		} catch (SQLException e) {
 			System.out.println(ps.toString());
