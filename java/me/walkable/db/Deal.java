@@ -6,6 +6,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
+import me.walkable.util.UtcTime;
 
 /**
  * 
@@ -23,12 +29,17 @@ public class Deal {
 	private String link_url;
 	private Timestamp start_date;
 	private Timestamp end_date;
+	private Timestamp updated_at;
 	private int offset;
 	private int remaining_quantity;
 	private double price;
 	private double value;
 	private double discount;
 	private DealItems items;
+	
+	public Deal(){
+		items = new DealItems();
+	}
 	
 
 	public static final String VENDOR_GROUPON = "groupon";
@@ -39,10 +50,11 @@ public class Deal {
 
 	//This function will return the did (Deal ID)
 	public int insertDeal(Connection conn){
+
 		int did=0;
 		String insertDeal = "INSERT INTO deals "
-				+ "(vendor, title, link_url, start_date, end_date, utc_offset, items) "
-				+ "VALUES(?, ?, ?, ?, ?, ?, ?)";
+				+ "(vendor, title, link_url, start_date, end_date, updated_at, utc_offset, items) "
+				+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
@@ -54,6 +66,7 @@ public class Deal {
 			ps.setString(x++, this.link_url);
 			ps.setTimestamp(x++, this.start_date);
 			ps.setTimestamp(x++, this.end_date);
+			ps.setTimestamp(x++, UtcTime.getCurrentTime());
 			ps.setInt(x++, this.offset);
 //			ps.setInt(x++, this.remaining_quantity);
 //			ps.setDouble(x++, this.price);
@@ -71,8 +84,9 @@ public class Deal {
 		    }
 		} catch (com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException e) {
 			//Ignore Duplicate
-//			System.err.println("Found Duplicate Deal");
+			System.err.println("Found Duplicate Deal... Updating");
 			did = findDeal(conn);
+			updateDeal(conn, did);
 			
 		} catch (SQLException e) {
 			System.out.println(ps.toString());
@@ -91,6 +105,44 @@ public class Deal {
 		}
 
 			return did;
+	}
+
+	/**
+	 * @param conn
+	 * @param did2
+	 */
+	private void updateDeal(Connection conn, int did) {
+		Calendar calendar = Calendar.getInstance();
+		Timestamp currentTimestamp = new Timestamp(calendar.getTimeInMillis());
+		String updateDeal = "Update deals "
+				+ "SET vendor = ?, title = ?, link_url = ?, start_date = ?, "
+				+ "end_date = ?, updated_at = ?, utc_offset = ?, items = ? "
+				+ "WHERE did = ?";
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement(updateDeal);
+			int x=1;
+			ps.setString(x++, this.vendor);
+			ps.setString(x++, this.title);
+			ps.setString(x++, this.link_url);
+			ps.setTimestamp(x++, this.start_date);
+			ps.setTimestamp(x++, this.end_date);
+			ps.setTimestamp(x++, UtcTime.getCurrentTime());
+			ps.setInt(x++, this.offset);
+			ps.setString(x++, this.items.toString());
+			ps.setInt(x++, did);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println(ps.toString());
+			e.printStackTrace();
+		} finally {
+          if (ps != null) {
+              try {
+                  ps.close();
+              } catch (SQLException e) { /*ignored*/ }
+          }
+		}
+
 	}
 
 	private int findDeal(Connection conn){
@@ -172,6 +224,14 @@ public class Deal {
 		this.end_date = timestamp;
 	}
 	
+	public Timestamp getUpdated_at() {
+		return updated_at;
+	}
+
+	public void setUpdated_at(Timestamp updated_at) {
+		this.updated_at = updated_at;
+	}
+
 	public int getOffset() {
 		return offset;
 	}

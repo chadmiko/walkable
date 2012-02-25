@@ -25,25 +25,37 @@ public class Location {
 	private double lng;
 	private String name;
 	private String url;
-
+	// Convert deg to Radians
+	private double sinLat; // sin (radians(lat))
+	private double cosCos; // cos (radians(lat)) * cos(radians(lng))
+	private double cosSin; // cos (radians(lat)) * sin (radians(lng))
+	
 	//This function will return the lid (Location ID)
 	public int insertLocation(Connection conn){
+
+		//Calculate values for Haversine
+		calculateSinCos();
+
 		int lid=0;
 		String insertLocations = "INSERT INTO locations "
-				+ "(street, street2, neighborhood, zip, lat, lng, name, url)"
-				+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+				+ "(street, street2, neighborhood, zip, lat, lng, name, url, sin_lat, cos_cos, cos_sin)"
+				+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ";
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
+			int x=1;
 			ps = conn.prepareStatement(insertLocations, Statement.RETURN_GENERATED_KEYS);
-			ps.setString(1, this.street);
-			ps.setString(2, this.street2);
-			ps.setString(3, this.neighborhood);
-			ps.setString(4, this.zip);
-			ps.setDouble(5, this.lat);
-			ps.setDouble(6, this.lng);
-			ps.setString(7, this.name);
-			ps.setString(8, this.url);			
+			ps.setString(x++, this.street);
+			ps.setString(x++, this.street2);
+			ps.setString(x++, this.neighborhood);
+			ps.setString(x++, this.zip);
+			ps.setDouble(x++, this.lat);
+			ps.setDouble(x++, this.lng);
+			ps.setString(x++, this.name);
+			ps.setString(x++, this.url);
+			ps.setDouble(x++, this.sinLat);
+			ps.setDouble(x++, this.cosCos);
+			ps.setDouble(x++, this.cosSin);
 			ps.executeUpdate();
 			
 		    rs = ps.getGeneratedKeys();
@@ -117,6 +129,18 @@ public class Location {
 
 	}
 	
+	public void calculateSinCos(){
+		double sinLat = Math.sin(Math.toRadians(this.lat));		
+		double sinLng = Math.sin(Math.toRadians(this.lng));		
+		double cosLat = Math.cos(Math.toRadians(this.lat));
+		double cosLng = Math.cos(Math.toRadians(this.lng));
+		
+		this.sinLat = sinLat;
+		this.cosCos = cosLat * cosLng;
+		this.cosSin = cosLat * sinLng;
+		
+	}
+	
 	public int getLid() {
 		return lid;
 	}
@@ -187,6 +211,30 @@ public class Location {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public double getSinLat() {
+		return sinLat;
+	}
+
+	public void setSinLat(double sinLat) {
+		this.sinLat = sinLat;
+	}
+
+	public double getCosCos() {
+		return cosCos;
+	}
+
+	public void setCosCos(double cosCos) {
+		this.cosCos = cosCos;
+	}
+
+	public double getCosSin() {
+		return cosSin;
+	}
+
+	public void setCosSin(double cosSin) {
+		this.cosSin = cosSin;
 	}	
 
 }
