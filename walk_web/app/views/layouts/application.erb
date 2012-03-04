@@ -1,0 +1,31 @@
+<%= partial('layouts/head1') %>
+
+  <title><%= title %></title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+  
+  <%= partial('layouts/head2') %>  
+
+<!-- 
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.js"></script>
+  -->
+</head> 
+<body>
+  <div id="container">
+    <h1>Walkable.me</h1>
+    <div id="header">
+      <span id="vendor"></span>
+    </div>
+    
+    <div id="wrapper">
+      <div id="main" role="main">
+        <%= yield %>
+      </div>
+    </div> <!-- //#wrapper -->
+  </div> <!-- //container -->
+
+  <script type="text/javascript">
+  </script>
+</body>
+</html>
