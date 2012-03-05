@@ -17,7 +17,8 @@ var Locator = Backbone.Model.extend({
   defaults: {
     lat: false,
     lon: false,
-    scale: 5,  //lat/lon scale
+    scale: .001,  //very poor "moved" algo, .001=300ft @40'N
+    denied: false  //tracking for when user denies geolocation
   },
   initialize: function(opts) {
     // Server will have to generate default lat, lon on page load
@@ -25,19 +26,38 @@ var Locator = Backbone.Model.extend({
   },
   locate: function() {
     console.log("calling Metro::locate()");
+    //@TODO check that they don't have a cookie set that they've denied 
+    //updates...if ok, then we can call, else return
+    //cook = $.cookie('geo:permission_denied');
+    if (false /*cook == 1*/) {
+      console.log("Cookie said no!");
+      //need to ensure some lat/lon gets set
+      //so just load some defaults for this market
+      if (!this.hasCoordinates()) {
+        this.setDefaultCoordinates();
+      }
+      return false; 
+    }
+    
     try {
       this.sync();
     } catch(err) {
-      console.log("Error is", err);
+      console.log(err);
+      //@TODO degrade gracefully on error
+      msg = "Oops, we couldn't get your location:  " + err.
+      alert(msg);
     }
   },
   sync: function(callback) {
     if (!navigator.geolocation) 
-      throw new Error("Not supported.");
+      throw new Error("Geolocation not supported.  Upgrade your browser.");
 
     var self = this;
     navigator.geolocation.getCurrentPosition(
       function(position) {
+        //remove any cookies that may have been set on previous denial
+        if ($.cookie('geo_no') == 1)   //do I really save by checking?
+          $.cookie('geo_no',null);
         self.updateCoordinates(position.coords.latitude, position.coords.longitude);
       },
       function(error) {
@@ -50,26 +70,60 @@ var Locator = Backbone.Model.extend({
             msg = "Position Unavailable.";
             break;
           case error.PERMISSION_DENIED:
+            //set a cookie to denied so we don't keep calling locate!
             return self.denied();
             break;
           case error.UKNOWN_ERROR:
             break;
         }
+        //remove any cookies, even if fetch fails for non-denied reason
+        if ($.cookie('geo_no')) 
+          $.cookie('geo_no',null);
+        
         throw new Error(msg);
     });
   },
   denied: function() {
-    alert("You denied us!!!");
+    this.setDefaultCoordinates(); 
+    cook = $.cookie('geo_no'); 
+    console.log("Cookie: ", cook);
+    if (cook == 1) 
+      return;
+    //should only be called once...the first time! 
+    msg = "We use location to improve relevancy. Read the FAQs to learn more.";
+    cook = $.cookie('geo_no', 1);
+    alert(msg);
   },
   updateCoordinates: function(lat, lon) {
-    // @TODO check if actually changed!!!
-    changed = true;    
-    this.set('lat', lat);
-    this.set('lon', lon); 
-    console.log("Coords set!", this.get('lat'), this.get('lon'));
+    changed = false;
+    c_lat = this.get('lat');
+    c_lon = this.get('lon');
+    scale = this.get('scale');
+    //console.log("scale: " , scale, "lat, lon", c_lat, lat, c_lon, lon);
 
-    if (changed)
+    if (c_lat && c_lon) {
+      var p = Math.abs(lat - c_lat);
+      var q = Math.abs(lon - c_lon);
+      changed = (p > scale || q > scale);
+    } else {
+      changed = true;
+    }
+
+    if (changed == true) {
+      this.set('lat', lat);
+      this.set('lon', lon); 
+      console.log("Coords set!", this.get('lat'), this.get('lon'));
       this.bubble('changed');
+    } else {
+      //console.log("Coords haven't changed!!!");
+    }
+  },
+  setDefaultCoordinates: function() {
+    //@TODO make server call and get per market name
+    this.updateCoordinates(41.87, -87.62);  //Meigs
+  },
+  hasCoordinates: function() {
+    return (this.get('lat') && this.get('lon'));
   },
   bubble: function(action) {
     console.log("Called locator:" + action);
@@ -102,9 +156,16 @@ var Metro = Backbone.Model.extend({
     if (!this.get('market')) throw new Error("Undefined market!");
     return '/api/deals/' + this.get('market');
   },
-  update: function(market) {
+  update: function(market, id) {
     //@TODO check if market changed
     this._locator.locate();
+    if (id) {
+      //get the item from collection  
+      deal = this.get('deals').get(id);
+      console.log(deal);
+      this._selected = deal;
+      this.bubble('itemized');
+    }
   }, 
   load: function(opts) {
     console.log("calling Metro::load()");
@@ -155,9 +216,12 @@ var HeaderView = Backbone.View.extend({
   }
 });
 
+
 var DealView = Backbone.View.extend({
   tagName: 'li',
-  template: _.template('<%= title %>'),
+  template: _.template('<a href="/deals/chicago/<%= did %>"><%= title %></a>'),
+  events: {
+  },
   initialize: function(opts) {
     _.bindAll(this, 'render');
     this.attributes = {"data-id": this.model.get('did')};
@@ -165,7 +229,7 @@ var DealView = Backbone.View.extend({
   render: function() {
     $(this.el).append(this.template(this.model.toJSON()));
     return this;
-  }
+  },
 });
 var DealsView = Backbone.View.extend({
   el: '#deals',
@@ -214,6 +278,9 @@ var ItemView = Backbone.View.extend({
   show: function() {
     console.log("Called itemView show");
     $(this.el).show();
+  },
+  open: function(deal) {
+    console.log("Called itemView:open()");
   }
 });
 
@@ -237,13 +304,7 @@ var App = Backbone.Router.extend({
       header: new HeaderView({model: this._metro}),
     };
     
-    //make Backbone work with normal links, degrade gracefully 
-    //see:  https://github.com/documentcloud/backbone/issues/456
-    $('h1').hide();
-    $('a').on('click', function(e) {
-      self.navigate($(this).attr('href'), true);
-      return false;
-    });
+   $('h1').hide();
 
     Backbone.history.start({pushState: true});
   },
@@ -264,5 +325,24 @@ var App = Backbone.Router.extend({
   } 
 });
 
- window.app = new App($('#main'), {market: 'chicago'});
+   
+  window.app = new App($('#main'), {market: 'chicago'});
+
+  //make Backbone work with normal links, degrade gracefully 
+  //see:  https://github.com/documentcloud/backbone/issues/456
+  window.document.addEventListener('click', function(e) {
+    e = e || window.event;
+    console.log('clicked');
+    var target = e.target || e.srcElement
+    if ( target.nodeName.toLowerCase() === 'a' ) {
+      e.preventDefault();
+      var uri = target.getAttribute('href');
+      window.app.navigate(uri.substr(1), true)
+      return false;
+    }
+  });
+  
+  window.addEventListener('popstate', function(e) {
+    window.app.navigate(location.pathname.substr(1), true);
+  });
 });
