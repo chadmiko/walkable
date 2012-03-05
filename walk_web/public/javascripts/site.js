@@ -47,7 +47,7 @@ var Locator = Backbone.Model.extend({
     navigator.geolocation.getCurrentPosition(
       function(position) {
         //update old status
-        this.set('status', false); 
+        self.set('status', false); 
         self.updateCoordinates(position.coords.latitude, position.coords.longitude);
       },
       function(error) {
@@ -219,7 +219,7 @@ var HeaderView = Backbone.View.extend({
 
 var DealView = Backbone.View.extend({
   tagName: 'li',
-  template: _.template('<a href="/deals/chicago/<%= did %>"><%= title %></a>'),
+  template: _.template('<span class="deal-vendor"><%= vendor %></span><a href="/deals/chicago/<%= did %>"><span class="deal-title"><%= title %></span><br /><span class="deal-merchant"><%= name %></span><span class="deal-dist"><%= distance %> mi.</span></a>'),
   events: {
   },
   initialize: function(opts) {
@@ -227,13 +227,13 @@ var DealView = Backbone.View.extend({
     this.attributes = {"data-id": this.model.get('did')};
   },
   render: function() {
+    console.log(this.model);
     $(this.el).append(this.template(this.model.toJSON()));
     return this;
   },
 });
 var DealsView = Backbone.View.extend({
   el: '#deals',
-  tagName: 'ul',
   initialize: function(opts) {
     _.bindAll(this, 'render', 'addAll', 'addOne');
     this.model.bind("metro:show metro:not_found", this.hide, this);
