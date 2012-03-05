@@ -4,10 +4,10 @@ function Page() {
   var self = this;
 }
 Page.prototype.start = function() {
-  $('#modal').empty().html('Loading...').show();
+  $('#flash').empty().html('Loading...').show();
 }
 Page.prototype.stop = function() {
-  $('#modal').hide().empty();
+  $('#flash').hide().empty();
 }
 
 var Errors = function() {
@@ -18,26 +18,17 @@ var Locator = Backbone.Model.extend({
     lat: false,
     lon: false,
     scale: .001,  //very poor "moved" algo, .001=300ft @40'N
-    denied: false  //tracking for when user denies geolocation
+    status: false  //tracking for denied/not now, to avoid multiple bubbles of changed
   },
   initialize: function(opts) {
-    // Server will have to generate default lat, lon on page load
-    // so defaults *should* be passed in
+    // how to handle Firefox "Not now" *feature*
+    //https://bugzilla.mozilla.org/show_bug.cgi?id=675533
   },
   locate: function() {
     console.log("calling Metro::locate()");
     //@TODO check that they don't have a cookie set that they've denied 
     //updates...if ok, then we can call, else return
     //cook = $.cookie('geo:permission_denied');
-    if (false /*cook == 1*/) {
-      console.log("Cookie said no!");
-      //need to ensure some lat/lon gets set
-      //so just load some defaults for this market
-      if (!this.hasCoordinates()) {
-        this.setDefaultCoordinates();
-      }
-      return false; 
-    }
     
     try {
       this.sync();
@@ -55,9 +46,8 @@ var Locator = Backbone.Model.extend({
     var self = this;
     navigator.geolocation.getCurrentPosition(
       function(position) {
-        //remove any cookies that may have been set on previous denial
-        if ($.cookie('geo_no') == 1)   //do I really save by checking?
-          $.cookie('geo_no',null);
+        //update old status
+        this.set('status', false); 
         self.updateCoordinates(position.coords.latitude, position.coords.longitude);
       },
       function(error) {
@@ -70,36 +60,36 @@ var Locator = Backbone.Model.extend({
             msg = "Position Unavailable.";
             break;
           case error.PERMISSION_DENIED:
-            //set a cookie to denied so we don't keep calling locate!
             return self.denied();
             break;
           case error.UKNOWN_ERROR:
             break;
         }
-        //remove any cookies, even if fetch fails for non-denied reason
-        if ($.cookie('geo_no')) 
-          $.cookie('geo_no',null);
-        
+        console.log("Error", msg); 
+        //edge case that they went from denied -> ok but throws error
+        this.set('status', false);  
         throw new Error(msg);
     });
   },
   denied: function() {
-    this.setDefaultCoordinates(); 
-    cook = $.cookie('geo_no'); 
-    console.log("Cookie: ", cook);
-    if (cook == 1) 
+    //note, closing browser on firefox kills state (or even cookie) 
+    //but not API choice, so test fails and user sees 
+    //alert message on next visit..probably a good thing given 
+    //Firefox's lack of indicator
+    st = this.get('status');
+    if (st == 'denied')
       return;
-    //should only be called once...the first time! 
+
+    this.set('status', 'denied');
     msg = "We use location to improve relevancy. Read the FAQs to learn more.";
-    cook = $.cookie('geo_no', 1);
-    alert(msg);
+    alert(msg); 
   },
   updateCoordinates: function(lat, lon) {
     changed = false;
     c_lat = this.get('lat');
     c_lon = this.get('lon');
     scale = this.get('scale');
-    //console.log("scale: " , scale, "lat, lon", c_lat, lat, c_lon, lon);
+    console.log("scale: " , scale, "lat, lon", c_lat, lat, c_lon, lon);
 
     if (c_lat && c_lon) {
       var p = Math.abs(lat - c_lat);
@@ -115,15 +105,12 @@ var Locator = Backbone.Model.extend({
       console.log("Coords set!", this.get('lat'), this.get('lon'));
       this.bubble('changed');
     } else {
-      //console.log("Coords haven't changed!!!");
+      console.log("Coords haven't changed!!!");
     }
   },
   setDefaultCoordinates: function() {
     //@TODO make server call and get per market name
     this.updateCoordinates(41.87, -87.62);  //Meigs
-  },
-  hasCoordinates: function() {
-    return (this.get('lat') && this.get('lon'));
   },
   bubble: function(action) {
     console.log("Called locator:" + action);
@@ -136,19 +123,26 @@ var DealCollection = Backbone.Collection.extend({model: Deal});
 var Metro = Backbone.Model.extend({
   defaults: {
     market: 'chicago',
-    deals: new DealCollection()
-  },
+    deals: new DealCollection(),
+    lat:  41.87,
+    lon: -87.62
+ },
   initialize: function(opts) {
     _.bindAll(this, 'getUrl', 'update', 'load', 'bubble', 'getParams');
     this._locator = new Locator(); 
     this._page = new Page();
     this._locator.on("locator:changed", this.load);
+    
+    //should get lat, lon defaults passed in with opts
+    //load defaults to account for Not Now issues
+    var o = { params: this.getParams(this.get('lat'), this.get('lon')) };
+    this.load(o);
   },
-  getParams: function() {
+  getParams: function(lat, lon) {
     var self = this;
     return {
-      lat: self._locator.get('lat'),
-      lon: self._locator.get('lon'),
+      lat: lat || self._locator.get('lat'),
+      lon: lon || self._locator.get('lon'),
       radius: 2, 
     }
   },
@@ -170,7 +164,7 @@ var Metro = Backbone.Model.extend({
   load: function(opts) {
     console.log("calling Metro::load()");
     var self = this;
-    var params = this.getParams();
+    var params = (opts && opts.params) ? opts.params : this.getParams();
     $.ajax({
       async: true,
       dataType: 'json',
@@ -184,6 +178,12 @@ var Metro = Backbone.Model.extend({
         coll.reset(json);
         self.set('deals', coll);
         self.bubble("loaded");
+      },
+      error: function(a, b, c) {
+        self._page.stop();
+        // @TODO bubble an error event
+        // which views can react to accordingly
+        alert("Error: Unable to load deals!");
       }
     }); 
       
@@ -332,7 +332,6 @@ var App = Backbone.Router.extend({
   //see:  https://github.com/documentcloud/backbone/issues/456
   window.document.addEventListener('click', function(e) {
     e = e || window.event;
-    console.log('clicked');
     var target = e.target || e.srcElement
     if ( target.nodeName.toLowerCase() === 'a' ) {
       e.preventDefault();
