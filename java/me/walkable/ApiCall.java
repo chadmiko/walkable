@@ -3,9 +3,11 @@ package me.walkable;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import me.walkable.cj.CommissionJunction;
 import me.walkable.foursquare.*;
 import me.walkable.groupon.*;
 import me.walkable.util.CategoryTree;
+import me.walkable.util.UtcTime;
 import me.walkable.yelp.*;
 
 /**
@@ -26,7 +28,7 @@ public class ApiCall {
 	static final String yToken = "rw2ExtIjLfYk-BAp2mF-wUwh3-4IUGKi";
 	static final String yTokenSecret = "5yNUcFAF53iGqkD7ROwHskqm2ys";
 
-	static final String gClientID = "8ad4ef59d1e755157121d9ac5f3ff16aeb89d93d";
+//	static final String gClientID = "8ad4ef59d1e755157121d9ac5f3ff16aeb89d93d";
 
 	//FourSquare
 	//	Client ID GXJ3J33W0NXGVAGGLHBORLNQHL14HCIZNTWKC2XU2RK510VL
@@ -34,6 +36,9 @@ public class ApiCall {
 
 	static final String fourClientID = "GXJ3J33W0NXGVAGGLHBORLNQHL14HCIZNTWKC2XU2RK510VL";
 	static final String fourSecret = "1VKEVJQZHMF22ZZTM0WIX05U2KH32T02WJHSINTDHKKOC2CN";
+	
+	static final String cjDeveloperKey = "00a7d09d71018a5005a88dae5175e10d3f4b009e0f1211722779aa31bd866d95e6bb9faadafe3113fcd48032ef8987f969889541347a091bee4d3fb23a0014f60f/5867114962a2561d64f99e06d3ae46a83cfe8a452e237a9b49005b4b97f14ab1721fc44857795f1339cd78c3335580eadf665c56102bbc0badd8a7accd68e321";
+//	static final String cjDeveloperKey = "00a7d09d71018a5005a88dae5175e10d3f4b009e0f1211722779aa31bd866d95e6bb9faadafe3113fcd48032ef8987f969889541347a091bee4d3fb23a0014f60f";
 
 	public static void getYelp() throws Exception{
 		//		double lat = 41.9485056;
@@ -118,13 +123,14 @@ public class ApiCall {
 
 	public static void getGroupon(){
 		//Groupon Example
-		Groupon groupon = new Groupon(gClientID);
+		Groupon groupon = new Groupon();
 		String gResponse = groupon.search("chicago");
 		//		System.out.println(gResponse);
-
+		
 		FileWriter gWriter; // I orginally used BufferedWriter - but it couldn't write everything to the file - kept creating incomplete files.
-		try { 
-			String fileName = "./groupon.json";
+		try {
+			String jsonDir = ".";
+			String fileName = jsonDir + "/groupon" + UtcTime.getFileTime() + ".json";
 			gWriter = new FileWriter ( fileName ) ;
 			gWriter.write(gResponse);
 			gWriter.close();
@@ -159,20 +165,26 @@ public class ApiCall {
 
 	}
 
+	public static void getGiltCity(){
+		CommissionJunction cj = new CommissionJunction(cjDeveloperKey);
+		System.out.println(cj.search());
+		
+	}
+	
 	public static void main(String[] args) {
 //		Yelp yelp = new Yelp(yConsumerKey, yConsumerSecret, yToken ,yTokenSecret);
 //		YelpDealObject yObj = yelp.getDeals(Yelp.CHICAGO, "0", "danceclubs");
 		
-		try {
-			getYelp();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-				getGroupon();
+//		try {
+//			getYelp();
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//				getGroupon();
 		//		getFourSquare();
-
-
+//		getGiltCity();
+		System.out.println(UtcTime.getFileTime());
 
 	}
 

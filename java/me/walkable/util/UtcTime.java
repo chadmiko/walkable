@@ -4,6 +4,7 @@
 package me.walkable.util;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -25,4 +26,12 @@ public class UtcTime {
 		return currentTimestamp;
 	}
 
+	public static String getFileTime(){
+		String filenameFormat = "yyyy-MM-dd_HH-mm-ss";
+		Timestamp time = getCurrentTime();
+		SimpleDateFormat dFormat = new SimpleDateFormat(filenameFormat);
+		String fileTime = dFormat.format(time);
+		return fileTime;
+	}
+	
 }

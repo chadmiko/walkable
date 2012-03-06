@@ -6,10 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 
 import me.walkable.util.UtcTime;
 
@@ -113,7 +110,6 @@ public class Deal {
 	 */
 	private void updateDeal(Connection conn, int did) {
 		Calendar calendar = Calendar.getInstance();
-		Timestamp currentTimestamp = new Timestamp(calendar.getTimeInMillis());
 		String updateDeal = "Update deals "
 				+ "SET vendor = ?, title = ?, link_url = ?, start_date = ?, "
 				+ "end_date = ?, updated_at = ?, utc_offset = ?, items = ? "

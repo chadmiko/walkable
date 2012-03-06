@@ -21,7 +21,8 @@ public class DatabaseUtil {
 	private	static final String serverName = "walkable.me";
 	private	static final String portNumber = "3306";
 	private	static final String dbName = "walk";
-
+	
+	
 	public static Connection getConnection()
 			throws SQLException {
 		try {
