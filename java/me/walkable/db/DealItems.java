@@ -39,7 +39,6 @@ public class DealItems {
 	 * 
 	 */
 	public DealItems() {
-		// TODO Auto-generated constructor stub
 	}
 
 	protected Options[] options;

@@ -6,8 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.Calendar;
-
+import java.util.ArrayList;
 import me.walkable.util.UtcTime;
 
 /**
@@ -109,7 +108,6 @@ public class Deal {
 	 * @param did2
 	 */
 	private void updateDeal(Connection conn, int did) {
-		Calendar calendar = Calendar.getInstance();
 		String updateDeal = "Update deals "
 				+ "SET vendor = ?, title = ?, link_url = ?, start_date = ?, "
 				+ "end_date = ?, updated_at = ?, utc_offset = ?, items = ? "
@@ -282,6 +280,13 @@ public class Deal {
 
 	public void setItems(DealItems items) {
 		this.items = items;
+	}
+	
+	public void setItems(ArrayList<DealItems.Options> opts){
+		DealItems.Options[] myOpts = opts.toArray(new DealItems.Options[opts.size()]);
+		this.items.setOptions(myOpts);
+		this.setItems(items);
+
 	}
 
 }

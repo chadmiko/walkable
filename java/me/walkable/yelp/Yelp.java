@@ -28,6 +28,13 @@ public class Yelp {
 	private OAuthService service;
 	private Token accessToken;
 	private final String searchURL = "http://api.yelp.com/v2/search";
+	
+	//THESE NEED TO BE KEPT PRIVATE!!!
+	private static final String consumerKey = "j0sM9V8eFDcYn0PmBTdqTA";
+	private static final String consumerSecret = "ihXDy_ikwu8DFZEjk4PiK754Y7k"; 
+	private static final String token = "rw2ExtIjLfYk-BAp2mF-wUwh3-4IUGKi";
+	private static final String tokenSecret = "5yNUcFAF53iGqkD7ROwHskqm2ys";
+
 
 	/**
 	 * Setup the Yelp API OAuth credentials.
@@ -39,7 +46,7 @@ public class Yelp {
 	 * @param token Token
 	 * @param tokenSecret Token secret
 	 */
-	public Yelp(String consumerKey, String consumerSecret, String token, String tokenSecret) {
+	public Yelp() {
 		this.service = new ServiceBuilder().provider(YelpApi.class).apiKey(consumerKey).apiSecret(consumerSecret).build();
 		this.accessToken = new Token(token, tokenSecret);
 	}

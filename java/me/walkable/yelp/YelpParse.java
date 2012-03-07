@@ -3,6 +3,7 @@ package me.walkable.yelp;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -43,9 +44,14 @@ public class YelpParse {
 						break;
 					for (YelpDealData.YelpDeal yDeal : yDeals.deals){
 						for (YelpDealData.YelpDeal.YelpOptions yOption : yDeal.options){
-
+							
 							Deal deal = new Deal();
 							deal.setVendor(Deal.VENDOR_YELP);
+
+							DealItems items = new DealItems();
+							ArrayList<DealItems.Options> opts = new ArrayList<DealItems.Options>();
+							
+							
 							//Parse Title
 //							String title = yDeal.what_you_get;
 //							if (title.contains("\n")){
@@ -66,8 +72,18 @@ public class YelpParse {
 							deal.setPrice(new Double(yOption.price).doubleValue() / 100.00);
 							deal.setValue(new Double(yOption.original_price).doubleValue() / 100.00);
 							deal.setDiscount( 1 - (deal.getPrice() / deal.getValue()));
+							
+							//Set Options
+							DealItems.Options dealOpts = items.new Options();
+							dealOpts.setTitle(yDeal.what_you_get);
+							dealOpts.setBuyUrl(yOption.purchase_url);
+							opts.add(dealOpts);
+							deal.setItems(opts);
+
+							//Insert Deal
 							did = deal.insertDeal(conn);
 							dealByLocation.setDid(did);
+							
 							++numOptions;
 						}
 						++numDeals;
@@ -77,6 +93,7 @@ public class YelpParse {
 					if (numOptions > 1)
 						System.err.println("Found " + numOptions + " within Yelp Deal Object");
 
+					
 					YelpDealData.YelpLocation yLoc = yDeals.location;
 					Location location = new Location();
 					//Parse Yelp Address ToDo

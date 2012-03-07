@@ -23,10 +23,10 @@ import me.walkable.yelp.*;
  */
 public class ApiCall {
 
-	static final String yConsumerKey = "j0sM9V8eFDcYn0PmBTdqTA";
-	static final String yConsumerSecret = "ihXDy_ikwu8DFZEjk4PiK754Y7k"; 
-	static final String yToken = "rw2ExtIjLfYk-BAp2mF-wUwh3-4IUGKi";
-	static final String yTokenSecret = "5yNUcFAF53iGqkD7ROwHskqm2ys";
+//	static final String yConsumerKey = "j0sM9V8eFDcYn0PmBTdqTA";
+//	static final String yConsumerSecret = "ihXDy_ikwu8DFZEjk4PiK754Y7k"; 
+//	static final String yToken = "rw2ExtIjLfYk-BAp2mF-wUwh3-4IUGKi";
+//	static final String yTokenSecret = "5yNUcFAF53iGqkD7ROwHskqm2ys";
 
 //	static final String gClientID = "8ad4ef59d1e755157121d9ac5f3ff16aeb89d93d";
 
@@ -83,7 +83,7 @@ public class ApiCall {
 
 	public static void yelpCategoryIterate(CategoryTree tree) throws Exception{
 
-		Yelp yelp = new Yelp(yConsumerKey, yConsumerSecret, yToken ,yTokenSecret);
+		Yelp yelp = new Yelp();
 		if (tree.isLeaf()){
 			YelpDealObject yObj = yelp.getDeals(Yelp.CHICAGO, "0", tree.getCategory());
 			System.out.println("Found " + yObj.getTotalNumberOfDeals() + " in leaf category: " + tree.getCategory());

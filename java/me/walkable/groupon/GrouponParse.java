@@ -4,12 +4,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import me.walkable.db.*;
-import me.walkable.db.DealItems.Options;
 
 /**
  * 
@@ -88,9 +86,9 @@ public class GrouponParse {
 
 					++optionNum;
 				}
-				DealItems.Options[] myOpts = opts.toArray(new DealItems.Options[opts.size()]);
-				items.setOptions(myOpts);
-				deal.setItems(items);
+//				DealItems.Options[] myOpts = opts.toArray(new DealItems.Options[opts.size()]);
+//				items.setOptions(myOpts);
+				deal.setItems(opts);
 
 				//Insert into DB
 				int did = deal.insertDeal(conn);
