@@ -45,6 +45,8 @@ public class YelpDealData {
 		protected String city;
 		protected String[] display_address;
 		protected int geo_accuracy;
+		protected String[] neighborhoods;
+		protected String postal_code;
 		protected String country_code;
 		protected String[] address;
 		protected YelpCoordinate coordinate;

@@ -44,20 +44,20 @@ public class YelpParse {
 						break;
 					for (YelpDealData.YelpDeal yDeal : yDeals.deals){
 						for (YelpDealData.YelpDeal.YelpOptions yOption : yDeal.options){
-							
+
 							Deal deal = new Deal();
 							deal.setVendor(Deal.VENDOR_YELP);
 
 							DealItems items = new DealItems();
 							ArrayList<DealItems.Options> opts = new ArrayList<DealItems.Options>();
-							
-							
+
+
 							//Parse Title
-//							String title = yDeal.what_you_get;
-//							if (title.contains("\n")){
-//								title = title.substring(0, title.indexOf('\n'));
-//							}
-//							deal.setTitle(title);
+							//							String title = yDeal.what_you_get;
+							//							if (title.contains("\n")){
+							//								title = title.substring(0, title.indexOf('\n'));
+							//							}
+							//							deal.setTitle(title);
 							deal.setTitle(yOption.title);
 							deal.setLink_url(yOption.purchase_url);
 							Timestamp startDate = new Timestamp(yDeal.time_start * 1000);
@@ -72,7 +72,7 @@ public class YelpParse {
 							deal.setPrice(new Double(yOption.price).doubleValue() / 100.00);
 							deal.setValue(new Double(yOption.original_price).doubleValue() / 100.00);
 							deal.setDiscount( 1 - (deal.getPrice() / deal.getValue()));
-							
+
 							//Set Options
 							DealItems.Options dealOpts = items.new Options();
 							dealOpts.setTitle(yDeal.what_you_get);
@@ -83,7 +83,7 @@ public class YelpParse {
 							//Insert Deal
 							did = deal.insertDeal(conn);
 							dealByLocation.setDid(did);
-							
+
 							++numOptions;
 						}
 						++numDeals;
@@ -93,19 +93,29 @@ public class YelpParse {
 					if (numOptions > 1)
 						System.err.println("Found " + numOptions + " within Yelp Deal Object");
 
-					
+
 					YelpDealData.YelpLocation yLoc = yDeals.location;
 					Location location = new Location();
 					//Parse Yelp Address ToDo
-					if (yLoc.display_address.length > 0) {
-						location.setStreet(yLoc.display_address[0]);
-						if (yLoc.display_address.length > 1){
-							location.setStreet2(yLoc.display_address[1]);
-							if (yLoc.display_address.length > 2){
-								//								System.out.println("More than 2 lines of display address");
-							}
+					location.setZip(yLoc.postal_code);
+					if (yLoc.neighborhoods.length > 0){
+						location.setNeighborhood(yLoc.neighborhoods[0]);
+					}
+					if (yLoc.address.length > 0){
+						location.setStreet(yLoc.address[0]);
+						if (yLoc.address.length > 1){
+							location.setStreet(yLoc.address[1]);
 						}
 					}
+					//					if (yLoc.display_address.length > 0) {
+					//						location.setStreet(yLoc.display_address[0]);
+					//						if (yLoc.display_address.length > 1){
+					//							location.setStreet2(yLoc.display_address[1]);
+					//							if (yLoc.display_address.length > 2){
+					//								//								System.out.println("More than 2 lines of display address");
+					//							}
+					//						}
+					//					}
 					//				location.setNeighborhood(yLoc);  //Is there Neighborhood data?
 					//				location.setZip(yLoc.); //Zip unfortunately is encoded with display address
 					location.setLat(yLoc.coordinate.latitude);
