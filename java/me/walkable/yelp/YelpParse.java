@@ -98,10 +98,10 @@ public class YelpParse {
 					Location location = new Location();
 					//Parse Yelp Address ToDo
 					location.setZip(yLoc.postal_code);
-					if (yLoc.neighborhoods.length > 0){
+					if (yLoc.neighborhoods != null && yLoc.neighborhoods.length > 0){
 						location.setNeighborhood(yLoc.neighborhoods[0]);
 					}
-					if (yLoc.address.length > 0){
+					if (yLoc.address != null && yLoc.address.length > 0){
 						location.setStreet(yLoc.address[0]);
 						if (yLoc.address.length > 1){
 							location.setStreet(yLoc.address[1]);

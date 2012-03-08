@@ -43,7 +43,6 @@ public class ExpireDeals {
 
 
 		PreparedStatement ps = null;
-		ResultSet rs = null;
 		int numDeleted = 0;
 		try {
 
@@ -53,12 +52,8 @@ public class ExpireDeals {
 			ps = conn.prepareStatement(insertDealByLocations);
 			ps.setString(1, vendor);
 			ps.executeUpdate();			
-			ps = conn.prepareStatement(deleteDealHistory, Statement.RETURN_GENERATED_KEYS);
-			ps.executeUpdate();			
-			rs = ps.getGeneratedKeys();
-			if (rs.next()) {
-				numDeleted = rs.getInt(1);
-			}
+			ps = conn.prepareStatement(deleteDealHistory);
+			numDeleted = ps.executeUpdate();			
 			ps = conn.prepareStatement(deleteDealByLocationHistory);
 			ps.executeUpdate();			
 
@@ -77,14 +72,7 @@ public class ExpireDeals {
 					ps.close();
 				} catch (SQLException e) { /*ignored*/ }
 			}
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) { /*ignored*/ }
-			}
-
 		}
-
 	}
 
 
@@ -111,7 +99,6 @@ public class ExpireDeals {
 
 
 		PreparedStatement ps = null;
-		ResultSet rs = null;
 		int numDeleted = 0;
 
 		try {
@@ -119,12 +106,8 @@ public class ExpireDeals {
 			ps.executeUpdate();
 			ps = conn.prepareStatement(insertDealByLocations);
 			ps.executeUpdate();			
-			ps = conn.prepareStatement(deleteDealHistory, Statement.RETURN_GENERATED_KEYS);
-			ps.executeUpdate();
-			rs = ps.getGeneratedKeys();
-			if (rs.next()) {
-				numDeleted = rs.getInt(1);
-			}
+			ps = conn.prepareStatement(deleteDealHistory);
+			numDeleted = ps.executeUpdate();
 			ps = conn.prepareStatement(deleteDealByLocationHistory);
 			ps.executeUpdate();			
 			
@@ -143,14 +126,7 @@ public class ExpireDeals {
 					ps.close();
 				} catch (SQLException e) { /*ignored*/ }
 			}
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) { /*ignored*/ }
-			}
-
 		}
-
 	}
 
 	public static void main(String[] args) {

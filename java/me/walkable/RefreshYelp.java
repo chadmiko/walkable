@@ -22,8 +22,8 @@ import me.walkable.yelp.YelpParse;
 public class RefreshYelp {
 
 
-	public static void yelpCategoryIterate(Yelp yelp, CategoryTree tree) throws Exception{
-
+	public static int yelpCategoryIterate(Yelp yelp, CategoryTree tree) throws Exception{
+		int numDeals = 0;
 		if (tree.isLeaf()){
 			YelpDealObject yObj = yelp.getDeals(Yelp.CHICAGO, "0", tree.getCategory());
 			System.out.println("Found " + yObj.getTotalNumberOfDeals() + " in leaf category: " + tree.getCategory());
@@ -38,6 +38,9 @@ public class RefreshYelp {
 					throw new Exception("More than 40 deals for child category.  Found " + yObj.getNumberOfDeals() + " " + tree.getCategory() + " in Yelp");
 				}
 			}
+            if (yObj != null){
+			    numDeals += yObj.getNumberOfDeals();
+            }
 		}
 		else {
 
@@ -57,16 +60,21 @@ public class RefreshYelp {
 					yelpCategoryIterate(yelp, subTree);
 				}
 			}
-		}
-
+            if (yObj != null){
+			    numDeals += yObj.getNumberOfDeals();
+		    }
+        }
+		return numDeals;
 	}
 
-	public static void getYelp() throws Exception{
+	public static int getYelp() throws Exception{
+		int numDeals = 0;
 		Yelp yelp = new Yelp();
 		YelpCategory ycats = new YelpCategory();
 		for (CategoryTree subTree :ycats.getCategories()){
-			yelpCategoryIterate(yelp, subTree);
+			numDeals += yelpCategoryIterate(yelp, subTree);
 		}
+		return numDeals;
 	}
 
 	public static void main(String[] args) {
@@ -74,10 +82,13 @@ public class RefreshYelp {
 		Connection conn = null;
 
 		try {
-			getYelp();
-			conn = DatabaseUtil.getConnection();
-			ExpireDeals.expireDealsByDate(conn);
-			ExpireDeals.expireRemovedDeals(conn, Deal.VENDOR_YELP);
+			int numDeals = getYelp();
+			if (numDeals > 0){
+
+				conn = DatabaseUtil.getConnection();
+				ExpireDeals.expireDealsByDate(conn);
+				ExpireDeals.expireRemovedDeals(conn, Deal.VENDOR_YELP);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
