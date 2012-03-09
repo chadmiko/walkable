@@ -12,7 +12,7 @@ import me.walkable.db.ExpireDeals;
 import me.walkable.groupon.Groupon;
 import me.walkable.groupon.GrouponObject;
 import me.walkable.groupon.GrouponParse;
-import me.walkable.util.WriteJsonFile;
+import me.walkable.util.WriteArchiveFile;
 
 /**
  * @author Christopher Butera
@@ -23,7 +23,7 @@ public class RefreshGroupon {
 	public static int getGroupon(String city){
 		Groupon groupon = new Groupon();
 		String gResponse = groupon.search(city);
-		WriteJsonFile.writeFile("Groupon", gResponse); //Write to file
+		WriteArchiveFile.writeFile("Groupon", gResponse, ".json"); //Write to file
 		GrouponObject obj = GrouponParse.parse(gResponse); //Parse json to object
 		GrouponParse.InsertGrouponData(obj);  // Insert object into Mysql
 		System.out.println(obj.deals.length + " Groupon deals processed");

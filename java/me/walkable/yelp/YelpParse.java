@@ -20,9 +20,13 @@ import me.walkable.db.*;
 public class YelpParse {
 
 	public static YelpDealObject parse(String json){
+		YelpDealObject object = null;
+		try {
 		Gson gson = new GsonBuilder().create();
-		YelpDealObject object = gson.fromJson(json, YelpDealObject.class);
-		//		InsertYelpData(object);
+		object = gson.fromJson(json, YelpDealObject.class);
+		} catch (com.google.gson.JsonSyntaxException e){
+			e.printStackTrace();
+		}
 		return object;
 	}
 
@@ -75,7 +79,10 @@ public class YelpParse {
 
 							//Set Options
 							DealItems.Options dealOpts = items.new Options();
-							dealOpts.setTitle(yDeal.what_you_get);
+							String[] title = yDeal.what_you_get.split("\nTwo options");
+							if (title != null){
+								dealOpts.setTitle(title[0]);
+							}
 							dealOpts.setBuyUrl(yOption.purchase_url);
 							opts.add(dealOpts);
 							deal.setItems(opts);
