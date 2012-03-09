@@ -12,20 +12,20 @@
   -->
 </head> 
 <body>
-  <div id="container">
-    <h1>Walkable.me</h1>
-    <div id="header">
-      <span id="vendor"></span>
-    </div>
-    
-    <div id="wrapper">
-      <div id="main" role="main">
-        <%= yield %>
+  <h1>Walkable.me</h1>
+  <div id="header" class="navbar">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="brand" href="/deals/chicago">walkable.me</a>
       </div>
-    </div> <!-- //#wrapper -->
-  </div> <!-- //container -->
-
-  <script type="text/javascript">
-  </script>
+    </div>
+  </div>
+  
+  <div id="wrapper" class="container">
+    <div id="main" role="main">
+      <%= yield %>
+    </div>
+    <div id="overlay">Loading...</div>
+  </div> <!-- //#wrapper -->
 </body>
 </html>

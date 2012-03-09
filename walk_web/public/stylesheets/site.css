@@ -1,48 +1,18 @@
 
-@media (min-width: 480px) {
-  .content-secondary {
-    width:auto;
-    float:none;
-    padding:0;
-    margin-left:0;
-    margin-right:0;
-    text-align:center;
-  }
-  .content-primary {
-    margin-left:0;
-    margin-right:0;
-    padding-right:0;
-    padding-left:0;
-    text-align:center;
-  }
-  .ui-block-a, .ui-block-b {
-    text-align:center;
-  }
+.container {
+  width:300px;
 }
 
-@media (min-width: 600px) {
-  /* jquerymobile homepage layout basically */
-  .content-secondary {
-    float:right;
-    text-align:right;
-    margin-right: 1%;
-    width:49%;
-    padding-right:1%; 
-  }
-  .content-primary {
-    text-align: left;
-    float:left;
-    width: 43%;
-    margin: 0 0 0 2%;
-    padding:0 4% 0 0;
-  }
+#deals li {
+  border: 1px solid #eee;
+}
+#deals .deal-body {
+  display:none;
+}
+#deals .deal-title, #deals .deal-title:hover {
+  cursor: pointer;
+}
+#deals .deal-vendor {
+  float:right;
 }
 
-@media (min-width: 750px) {
-
-  .content-secondary {
-    width: 40%;
-     
-  }
-
-}

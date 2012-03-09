@@ -2,14 +2,9 @@ class WalkWeb < Padrino::Application
   register Padrino::Rendering
   register Padrino::Mailer
   register Padrino::Helpers
+  register Padrino::Cache
   
-  
-  configure do
-    mime_type :json, "application/json"
-  end
-    
-  #enable :sessions
-  set :caching, false
+  enable :caching  
   set :exceptions_subject, "Walkable"
   set :exceptions_from,    "Walkable App <exceptions@walkable.me>"
   set :exceptions_to,      "chadmiko@gmail.com"

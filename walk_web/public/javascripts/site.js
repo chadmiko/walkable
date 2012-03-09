@@ -1,81 +1,133 @@
 $(function(){
-
-function Page() {
-  var self = this;
-}
-Page.prototype.start = function() {
-  $('#flash').empty().html('Loading...').show();
-}
+  
+var Page = function() {};
+Page.prototype.start = function stop() {
+    $('#flash').empty().html('Loading...').show();
+};
 Page.prototype.stop = function() {
-  $('#flash').hide().empty();
-}
+    $('#flash').hide().empty();
+};
 
-var Errors = function() {
+Page.prototype.request = function(opts) {
+    var self = this;
+    var params = opts.params || {};
+    var success = opts.success || null;
+    var error = opts.error || null;
+    $.ajax({
+      async: true,
+      dataType: 'json',
+      type: opts.method || 'GET',
+      url: opts.url,
+      data: params,
+      beforeSend: function() { self.start(); },
+      success: function(json) {
+        self.stop();
+        if (success) 
+          return success(json);
+        else
+          return json;
+      },
+      error: function(a, b, c) {
+        self.stop();
+        // @TODO bubble an error event
+        // which views can react to accordingly
+        if (error)
+          return error(a, b, c);
 
-}
+        console.log(a, b, c);
+        alert("Error: Unable to load deals!");
+      }
+    });
+};
+window.page = new Page();
+
 var Locator = Backbone.Model.extend({
+  //@TODO abstract data into collection of markers[lat,lon,id]
+  // marker...allows for multiple user-defined markers 
   defaults: {
     lat: false,
     lon: false,
     scale: .001,  //very poor "moved" algo, .001=300ft @40'N
-    status: false  //tracking for denied/not now, to avoid multiple bubbles of changed
+    status: false,  //tracking for denied/not now, to avoid multiple bubbles of changed
+    watch_id: null
   },
-  initialize: function(opts) {
-    // how to handle Firefox "Not now" *feature*
-    //https://bugzilla.mozilla.org/show_bug.cgi?id=675533
+
+  // watch on startup
+  initialize: function() {
+    _.bindAll(this, 'watch', 'onSuccess', 'onError');
   },
-  locate: function() {
-    console.log("calling Metro::locate()");
-    //@TODO check that they don't have a cookie set that they've denied 
-    //updates...if ok, then we can call, else return
-    //cook = $.cookie('geo:permission_denied');
-    
+  unwatch: function() {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.clearWatch(this.get('watch_id'));
+  },
+  watch: function() {
+    console.log("calling watch()");
     try {
-      this.sync();
+      if (!navigator.geolocation) 
+        throw new Error("Geolocation not supported.  Upgrade your browser.");
+
+      var self = this;
+    //time is in milliseconds  
+    //https://developer.mozilla.org/En/Using_geolocation#Watching_the_current_position 
+      var watch_id = navigator.geolocation.watchPosition(
+        self.onSuccess, 
+        self.onError,
+        // FF needs timeout high or fails often
+        {enableHighAccuracy: true, maximumAge:60000, timeout: 120000 }
+        //{enableHighAccuracy:true, maximumAge:30000, timeout:27000}
+      );
+      this.set('watch_id', watch_id);
     } catch(err) {
       console.log(err);
-      //@TODO degrade gracefully on error
       msg = "Oops, we couldn't get your location:  " + err.
       alert(msg);
     }
   },
-  sync: function(callback) {
-    if (!navigator.geolocation) 
-      throw new Error("Geolocation not supported.  Upgrade your browser.");
+  start: function() {
+    console.log("calling locate()");
+    try {
+      if (!navigator.geolocation) 
+        throw new Error("Geolocation not supported.  Upgrade your browser.");
 
-    var self = this;
-    navigator.geolocation.getCurrentPosition(
-      function(position) {
-        //update old status
-        self.set('status', false); 
-        self.updateCoordinates(position.coords.latitude, position.coords.longitude);
-      },
-      function(error) {
-        msg = "Unknown error.";
-        switch(error.code) {
-          case error.TIMEOUT:
-            msg = "Timeout.";
-            break;
-          case error.POSITION_UNAVAILABLE:
-            msg = "Position Unavailable.";
-            break;
-          case error.PERMISSION_DENIED:
-            return self.denied();
-            break;
-          case error.UKNOWN_ERROR:
-            break;
-        }
-        console.log("Error", msg); 
-        //edge case that they went from denied -> ok but throws error
-        this.set('status', false);  
-        throw new Error(msg);
-    });
+      var self = this;
+      navigator.geolocation.getCurrentPosition(
+        self.onSuccess, 
+        self.onError
+      );
+    } catch(err) {
+      console.log(err);
+      msg = "Oops, we couldn't get your location:  " + err.
+      alert(msg);
+    }
+  },
+  onSuccess: function(position) {
+    //negate last status
+    this.set('status', false); 
+    this.updateCoordinates(position.coords.latitude, position.coords.longitude);
+  },
+  onError: function(error) {
+    msg = "Unknown error.";
+    switch(error.code) {
+      case error.TIMEOUT:
+        msg = "Timeout.";
+        break;
+      case error.POSITION_UNAVAILABLE:
+        msg = "Position Unavailable.";
+        break;
+      case error.PERMISSION_DENIED:
+        return this.denied();
+        break;
+      case error.UKNOWN_ERROR:
+        break;
+    }
+    this.set('status', false);
+    throw new Error(msg);
   },
   denied: function() {
-    //note, closing browser on firefox kills state (or even cookie) 
-    //but not API choice, so test fails and user sees 
+    //note, closing browser kills state (or even cookie) 
+    //but not API choice in some instances, so test fails and user sees 
     //alert message on next visit..probably a good thing given 
-    //Firefox's lack of indicator
+    //Firefox & Safari's lack of indicator
     st = this.get('status');
     if (st == 'denied')
       return;
@@ -84,8 +136,11 @@ var Locator = Backbone.Model.extend({
     msg = "We use location to improve relevancy. Read the FAQs to learn more.";
     alert(msg); 
   },
+  //@TODO move into markers object & update event chain accordingly
   updateCoordinates: function(lat, lon) {
     changed = false;
+    if (typeof lat == 'number') lat = lat.toFixed(3);
+    if (typeof lon == 'number') lon = lon.toFixed(3);
     c_lat = this.get('lat');
     c_lon = this.get('lon');
     scale = this.get('scale');
@@ -108,140 +163,209 @@ var Locator = Backbone.Model.extend({
       console.log("Coords haven't changed!!!");
     }
   },
-  setDefaultCoordinates: function() {
-    //@TODO make server call and get per market name
-    this.updateCoordinates(41.87, -87.62);  //Meigs
-  },
   bubble: function(action) {
     console.log("Called locator:" + action);
     var ev = "locator:" + action;
     this.trigger(ev); 
   }
 });
-var Deal = Backbone.Model.extend({});
-var DealCollection = Backbone.Collection.extend({model: Deal});
-var Metro = Backbone.Model.extend({
+var Deal = Backbone.Model.extend({
   defaults: {
-    market: 'chicago',
-    deals: new DealCollection(),
-    lat:  41.87,
-    lon: -87.62
- },
+    active: false
+  },
+  toggle: function() {
+    this.set({active: !(this.get('active'))});
+  }  
+});
+var Deals = Backbone.Collection.extend({
+  market: 'chicago',
+  coords: {lat: 41.87, lon: -87.62},
+  radius: 3,
+  model: Deal,
+  locator: false,
   initialize: function(opts) {
-    _.bindAll(this, 'getUrl', 'update', 'load', 'bubble', 'getParams');
-    this._locator = new Locator(); 
-    this._page = new Page();
-    this._locator.on("locator:changed", this.load);
-    
-    //should get lat, lon defaults passed in with opts
-    //load defaults to account for Not Now issues
-    var o = { params: this.getParams(this.get('lat'), this.get('lon')) };
-    this.load(o);
+    _.bindAll(this, 'load');
+    this.locator = new Locator();
+    this.locator.on("locator:changed", this.load);
+    this.load();
+    this.locator.watch();  //have to load defaults first, then watch
   },
-  getParams: function(lat, lon) {
+  //Custom fetch, just easier this way not knowing internals well
+  load: function() {
+    //console.log("calling Metro::load()");
     var self = this;
-    return {
-      lat: lat || self._locator.get('lat'),
-      lon: lon || self._locator.get('lon'),
-      radius: 2, 
-    }
-  },
-  getUrl: function() {
-    if (!this.get('market')) throw new Error("Undefined market!");
-    return '/api/deals/' + this.get('market');
-  },
-  update: function(market, id) {
-    //@TODO check if market changed
-    this._locator.locate();
-    if (id) {
-      //get the item from collection  
-      deal = this.get('deals').get(id);
-      console.log(deal);
-      this._selected = deal;
-      this.bubble('itemized');
-    }
-  }, 
-  load: function(opts) {
-    console.log("calling Metro::load()");
-    var self = this;
-    var params = (opts && opts.params) ? opts.params : this.getParams();
-    $.ajax({
+    url = this.url();
+    var o = {
       async: true,
       dataType: 'json',
-      type: 'GET',
-      url: this.getUrl(),
-      data: params,
-      beforeSend: function() { self._page.start(); },
+      method: 'GET',
+      params: this.params(),
+      url: this.url(),
+      //beforeSend:  ?,
+      //error,
       success: function(json) {
-        self._page.stop();
-        coll = self.get('deals');
-        coll.reset(json);
-        self.set('deals', coll);
-        self.bubble("loaded");
-      },
-      error: function(a, b, c) {
-        self._page.stop();
-        // @TODO bubble an error event
-        // which views can react to accordingly
-        alert("Error: Unable to load deals!");
+        //@TODO save state of existing UI
+        self.reset(json);
       }
-    }); 
-      
+    };    
+    //console.log("Sending params: ", o);
+    page.request(o);    
+  }, 
+  //Filter list to active items i.e. open
+  active: function() {
+    return this.filter(function(deal) { return deal.get('active'); });
   },
-  // trigger via router, views respond accodingly
+  //Sould effective compact all items at once
+  selectNone: function() {
+    return this.each(function(deal) { deal.set('active', false); });
+  },
+  //url to fetch from
+  url: function() {
+    return '/api/deals/' + this.market;
+  },
+  //query params for GET request
+  params: function() {
+    //use defaults only if locator not found
+    lat = this.locator.get('lat') || this.coords.lat;
+    lon = this.locator.get('lon') || this.coords.lon;
+    return {
+      lat: lat,
+      lon: lon,
+      radius: this.radius
+    }
+  },
+  update: function(market) {
+    //@TODO check if market changed
+    //this.locator.locate();  //not needed if using watchLocation
+  },
   bubble: function(action) {
     ev = "metro:" + action
     console.log("bubbling " + ev);
     this.trigger(ev);
   },
- /*
-  setMarket: function(mkt) {
-    //@TODO trigger some not_found event unless mkt is in some predefined array
-    this.set('market', mkt);
-    return this;
-  }, */
 });
 
 var HeaderView = Backbone.View.extend({
   el: '#header',
   initialize: function(opts) {
-    this.model.bind("metro:show", this.vendor, this);
-    this.model.bind("metro:list metro:not_found", this.walkable, this); 
-  },
-  vendor: function() {
-    $('#vendor').empty('').html('some vendor');
+    this.walkable();
   },
   walkable: function() {
-    $('#vendor').empty('').html('walkable');
+    $('#vendor').html('walkable');
   }
 });
 
+var DealHeaderView = Backbone.View.extend({
+  tagName: 'div',
+  className: 'deal-header',
+  template: _.template('<span class="deal-vendor"><%= vendor %></span><span class="deal-title"><%= title %></span><br /><span class="deal-merchant"><%= name %></span>&nbsp;<span class="deal-dist"><%= distance %> mi.</span>'),
+  initialize: function(opts) {
+    _.bindAll(this, 'render');
+  },
+  render: function() {
+    //crappy yelp hack
+    if (this.model.get('vendor') == 'yelp') {
+      tmp = this.model.get('title');
+      this.model.set('title', this.model.get('name'));
+      this.model.set('name', tmp);
+    }
+    
+    $(this.el).append(this.template(this.model.toJSON()));
+    return this;
+  }
+});
+var DealBodyView = Backbone.View.extend({
+  tagName: 'div',
+  className: 'deal-body',
+
+  initialize: function(opts) {
+    this._deal_options = new DealOptionsView({model: this.model});
+  },
+  render: function() {
+    //$(this.el).append('Body!!!');
+    $(this.el).empty('').append(this._deal_options.render().el);
+    return this;
+  }
+});
+var DealOptionsView = Backbone.View.extend({
+  tagName: 'ul',
+  className: 'deal-options',
+  template: _.template('<li><span><%= title %></span><a href="<%= buyUrl %>" title="Buy It!" class="btn btn-primary">Buy!</a></li>'),
+  template_no_title: _.template('<li><a href="<% buyUrl %>" title="Buy It!" class="btn btn-primary">Buy!</a></li>'),
+  template_no_url:   _.template('<li><%= title %></li>'),
+  initialize: function(opts) {
+    _.bindAll(this, 'render');
+  },
+  render: function() {
+    $(this.el).empty();
+    items = JSON.parse(this.model.get('items')) || [];
+    if ( items.length < 1 || typeof items.options == 'undefined' ) {
+      $(this.el).append('<li>Unable to fetch deal options. Sorry.</li>');
+    } else {
+      var self = this;
+      if (items.options.length > 1 )
+        console.log(this.model.get('did'), this.model.get('name'));
+
+      _.each(items["options"], function(o) { 
+        if( o.title && o.buyUrl)
+          t = self.template;
+        else if (o.buyUrl)
+          t = self.template_no_title;
+        else
+          t = self.template_no_url;
+
+        $(self.el).append(t(o)); 
+      });
+      //this.addAll(items.options);
+    }
+    return this; 
+  },
+  addOne: function(item) {
+    //view = new DealView({model: deal});
+    //view.render();
+    $(this.el).append(view.el); 
+  },
+  addAll: function() {
+    //this.collection.each(this.addOne);
+  }, 
+});
 
 var DealView = Backbone.View.extend({
   tagName: 'li',
-  template: _.template('<span class="deal-vendor"><%= vendor %></span><a href="/deals/chicago/<%= did %>"><span class="deal-title"><%= title %></span><br /><span class="deal-merchant"><%= name %></span><span class="deal-dist"><%= distance %> mi.</span></a>'),
   events: {
+    "click .deal-title"  : "toggleActive"
   },
   initialize: function(opts) {
     _.bindAll(this, 'render');
     this.attributes = {"data-id": this.model.get('did')};
+    this._header = new DealHeaderView({model: this.model});
+    this._body   = new DealBodyView({model: this.model});
   },
   render: function() {
-    console.log(this.model);
-    $(this.el).append(this.template(this.model.toJSON()));
+    $(this.el).empty()
+      .append(this._header.render().el)
+      .append(this._body.render().el);
     return this;
   },
+  toggleActive: function() {
+    console.log("called toggle!");
+    this.model.toggle();
+    st = this.model.get('active');
+    if (st == true) {
+      $('.deal-body', this.el).show();
+    }else {
+      $('.deal-body', this.el).hide();
+    }
+  }
 });
 var DealsView = Backbone.View.extend({
   el: '#deals',
   initialize: function(opts) {
     _.bindAll(this, 'render', 'addAll', 'addOne');
-    this.model.bind("metro:show metro:not_found", this.hide, this);
-    this.model.bind("metro:list", this.show, this);
-    this.model.bind("metro:loaded", this.render, this);
+    this.collection.bind("reset", this.render, this);
   },
   render: function() {
-    this.collection = this.model.get('deals');
+    $(this.el).empty();
     this.addAll();
   },
   addOne: function(deal) {
@@ -252,74 +376,41 @@ var DealsView = Backbone.View.extend({
   addAll: function() {
     this.collection.each(this.addOne);
   },
-  hide: function() {
-    $(this.el).hide();
-    console.log('called dealsView hide');
-  },
-  show: function() {
-    $(this.el).show();
-    console.log('called dealsView show');
-  }
-});
-
-var ItemView = Backbone.View.extend({
-  el: '#item',
-  initialize: function(opts) {
-    this.model.bind("metro:show", this.show, this);
-    this.model.bind("metro:list", this.hide, this);
-    this.render();
-  },
-  render: function() {
-    $(this.el).empty('').html("Item View!!");
-  },
-  hide: function() {
-    $(this.el).hide();
-  },
-  show: function() {
-    console.log("Called itemView show");
-    $(this.el).show();
-  },
-  open: function(deal) {
-    console.log("Called itemView:open()");
-  }
 });
 
 var App = Backbone.Router.extend({
   routes: {
-    "deals/:market" : "listDeals",
-    "deals/:market/:id" : "showDeal",
+    "deals/:market" : "list",
+    "deals/:market/:id" : "show",
     "about/:page"   : "about",
     "*splat"        : "notFound"
   },
   initialize: function(el, opts) {
     var self = this;
-    //self.page    = new Page();
     this._el = el;
     //this._errors  = opts.errors ? opts.errors : new Errors();
     //this._locator = opts.locator ? opts.locator : new Locator();
-    this._metro = new Metro();
+    this._deals = new Deals(opts);
     this._views = {
-      deals: new DealsView({model: this._metro}),
-      item: new ItemView({model: this._metro}),
-      header: new HeaderView({model: this._metro}),
+      deals: new DealsView({collection: this._deals}),
+      header: new HeaderView(),
     };
-    
-   $('h1').hide();
-
+    //this._deals.load();
+ 
+    $('h1').hide();
     Backbone.history.start({pushState: true});
   },
 
-  listDeals: function(market) {
-    var params = {lat: 47, lon: -87, radius: 2 } 
-    this._metro.bubble("list");
-    this._metro.update(market);
+  list: function(market) {
+    this._deals.update(market);
+    //this._metro.bubble("list");
   },
 
-  showDeal: function(market, id) {
-    this._metro.bubble("show");
-    this._metro.update(market);
+  show: function(market, id) {
+    this._deals.update(market);
+    //this._metro.updateActive(id);
+    //this._metro.bubble("show");
   },
-  
   notFound: function(splat) {
     alert("Page not found");
   } 
@@ -328,19 +419,29 @@ var App = Backbone.Router.extend({
    
   window.app = new App($('#main'), {market: 'chicago'});
 
-  //make Backbone work with normal links, degrade gracefully 
+   //make Backbone work with normal links, degrade gracefully 
   //see:  https://github.com/documentcloud/backbone/issues/456
   window.document.addEventListener('click', function(e) {
-    e = e || window.event;
-    var target = e.target || e.srcElement
-    if ( target.nodeName.toLowerCase() === 'a' ) {
-      e.preventDefault();
-      var uri = target.getAttribute('href');
-      window.app.navigate(uri.substr(1), true)
-      return false;
-    }
+        e = e || window.event;
+        var target = e.target || e.srcElement;
+        var uri = false;
+ 
+        if (target.nodeName.toLowerCase() === 'a') {
+          uri = target.getAttribute('href');
+        } else if ($(target, 'a').length == 1) {
+          target = $(target).parent('a');
+          uri = target.attr('href');
+        }
+        
+        if ( uri ) {
+          e.preventDefault();
+          //var uri = target.getAttribute('href');
+          //var uri = target.attr('href');
+          window.app.navigate(uri.substr(1), true)
+          return false;
+        }
   });
-  
+
   window.addEventListener('popstate', function(e) {
     window.app.navigate(location.pathname.substr(1), true);
   });

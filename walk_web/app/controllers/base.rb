@@ -5,4 +5,7 @@ WalkWeb.controllers :base do
     #render "base/index"
   end
 
+  get :hello do
+    "hello!"
+  end
 end

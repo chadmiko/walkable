@@ -27,6 +27,14 @@ end
 # Add your after load hooks here
 #
 Padrino.after_load do
+  #
+  # Affects caching to file...This was a killer
+  # @see:  https://github.com/padrino/padrino-framework/pull/724
+  # semi-related: https://github.com/padrino/padrino-framework/issues/519
+  # 
+  Encoding.default_internal = nil
+  Encoding.default_external = 'ASCII-8BIT'
+
   DataMapper.finalize
 end
 
