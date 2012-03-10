@@ -39,7 +39,9 @@ public class RefreshYelp {
 						throw new Exception("More than 40 deals for child category.  Found " + yObj.getNumberOfDeals() + " " + tree.getCategory() + " in Yelp");
 					}
 				}
-				numDeals += yObj.getNumberOfDeals();
+				if (yObj != null){
+					numDeals += yObj.getNumberOfDeals();
+				}
 			}
 		}
 		else {
@@ -61,7 +63,9 @@ public class RefreshYelp {
 						yelpCategoryIterate(yelp, subTree);
 					}
 				}
-				numDeals += yObj.getNumberOfDeals();
+				if (yObj != null){
+					numDeals += yObj.getNumberOfDeals();
+				}
 			}
 		}
 		return numDeals;
