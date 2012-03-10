@@ -5,4 +5,4 @@ java="/usr/bin/java"
 cd /var/git/hackers/walkable/java
 ./compile.sh
 
-java -classpath $cp $pdir/RefreshYelp
+$java -classpath $cp $pdir/RefreshYelp
