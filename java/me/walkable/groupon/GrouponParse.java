@@ -72,7 +72,8 @@ public class GrouponParse {
 							location.setZip(gLoc.postalCode);
 							location.setLat(gLoc.lat);
 							location.setLng(gLoc.lng);
-							location.setName(dealData.merchant.name);
+//							location.setName(dealData.merchant.name);
+							location.setName(gLoc.name);
 							location.setUrl(dealData.merchant.websiteUrl);
 							locations.add(location);
 						}
