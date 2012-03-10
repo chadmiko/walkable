@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+
+import me.walkable.cj.CommissionJunctionObject;
 import me.walkable.util.UtcTime;
 
 /**
@@ -37,9 +39,26 @@ public class Deal {
 		items = new DealItems();
 	}
 	
+	public Deal(CommissionJunctionObject cmjObj){
+		this.did = 0;
+		this.vendor = cmjObj.getAdvertiserName();
+		this.title = cmjObj.getDescription();
+		this.link_url = cmjObj.getBuyUrl();
+		this.start_date = null;
+		this.end_date = null;
+		this.updated_at = null;
+		this.offset = 0;
+		this.remaining_quantity = 0;
+		this.price = Double.valueOf(cmjObj.getPrice());
+		this.value = Double.valueOf(cmjObj.getRetailPrice());
+		this.discount = 0;
+		this.items = new DealItems();
+	}
+	
 
 	public static final String VENDOR_GROUPON = "groupon";
 	public static final String VENDOR_YELP = "yelp";
+	public static final String VENDOR_GILT_CITY = "Gilt City";
 	
 	public static final int REMAINING_QUANTITY_UNLIMITED = -999999999;
 	

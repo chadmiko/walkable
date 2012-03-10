@@ -71,6 +71,7 @@ public class CommissionJunctionParse {
 					Element eElement = (Element) nNode;
 					CommissionJunctionObject obj = new CommissionJunctionObject();
 					//					obj.adId = getTagValue("ad-id", eElement);
+					obj.advertiserName = getTagValue("advertiser-name", eElement);
 					obj.advertiserCategory = getTagValue("advertiser-category", eElement);
 					obj.setBuyUrl(getTagValue("buy-url", eElement));
 					obj.description = getTagValue("description", eElement);

@@ -67,7 +67,8 @@ public class ApiCall {
 		String cjXML = cj.search(CommissionJunction.VENDOR_GILT_CITY);
 		WriteArchiveFile.writeFile("GiltCity", cjXML, ".xml"); //Write to file
 		ArrayList<CommissionJunctionObject> cjList = CommissionJunctionParse.parse(cjXML);
-		GiltCityParse.parse(cjList);
+		int numGilt = GiltCityParse.parse(cjList);
+		System.out.println("Done inserting/updating " + numGilt + " deals");
 	}
 	
 	public static void main(String[] args) {

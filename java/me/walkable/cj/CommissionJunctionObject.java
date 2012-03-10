@@ -11,7 +11,7 @@ public class CommissionJunctionObject {
 
 	//NOT USED	protected String adId;
 	//NOT USED	protected String advertiserIid;
-	//NOT USED	protected String advertiserName;
+	protected String advertiserName;
 	protected String advertiserCategory;
 	private String buyUrl;
 	//NOT USED	protected String catalogID;
@@ -33,6 +33,30 @@ public class CommissionJunctionObject {
 	}
 	public void setBuyUrl(String buyUrl) {
 		this.buyUrl = buyUrl;
+	}
+	public String getAdvertiserName() {
+		return advertiserName;
+	}
+	public String getAdvertiserCategory() {
+		return advertiserCategory;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public String getManufacturerName() {
+		return manufacturerName;
+	}
+	public String getName() {
+		return name;
+	}
+	public String getPrice() {
+		return price;
+	}
+	public String getRetailPrice() {
+		return retailPrice;
+	}
+	public String getSalePrice() {
+		return salePrice;
 	}
 	
 }
