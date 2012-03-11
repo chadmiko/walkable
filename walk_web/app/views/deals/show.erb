@@ -1,0 +1,34 @@
+<% title "Deal no longer available" %>
+
+<div class="deal" style="text-align:center">
+
+<% if @deal %>
+  <% title @deal.title + " at " + @merchant  %>  
+  <h3><%= @deal.title %> </h3>
+  (check title for merch name dupe else output)
+  <div class="geo hide" data-ll='{"lat": 44, "lon": -87}'>  </div> 
+  
+    <div style="height:40px; background:#ddd; width:300px; margin:0 auto;">
+      40% savings
+    </div>
+    <img src="http://placehold.it/200x300" height="200" width="300" /> 
+    <br /><small>locations on map</small>
+
+  <!--
+  <div data-role="footer" data-position="fixed" data-fullscreen="true">
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#">Summary</a></li>
+        <li><a href="#">Share</a></li>
+        <li><a href="#">Save</a></li>
+      </ul>
+    </div>
+  </div>
+  -->  
+<% else %>
+
+  <div class="content-primary"><h3>Deal not found</h3> <p>Sorry, requested deal no longer available</p></div>
+
+<% end %>
+
+</div>

@@ -1,0 +1,18 @@
+
+.container {
+  width:300px;
+}
+
+#deals li {
+  border: 1px solid #eee;
+}
+#deals .deal-body {
+  display:none;
+}
+#deals .deal-title, #deals .deal-title:hover {
+  cursor: pointer;
+}
+#deals .deal-vendor {
+  float:right;
+}
+

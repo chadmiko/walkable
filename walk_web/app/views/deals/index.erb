@@ -1,0 +1,15 @@
+<% if @deals.empty? %>
+  <p>No Deals found.</p>
+  <% else %>
+  <ul>
+    <% @deals.each do |deal|  %>
+    <li>
+    <a href="<%= url(:deals, :show, :did => deal["did"]) %>" data-transition="slide">
+        <span class="title"><%= deal["title"] %></span><br />
+        <span class="merchant"><%= deal["name"] %>&nbsp;
+          <span class="distance"><%= sprintf("%.2f", deal["distance"].to_f) %> miles</span>
+      </a> 
+    </li>
+    <% end %>
+  </ul>
+<% end %>
