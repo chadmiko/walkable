@@ -17,9 +17,13 @@ import java.sql.Statement;
 public class ExpireDeals {
 
 	//Expire all deals if they haven't been updated for this much time - this is currently most useful for Yelp
-	public final static String expireTime = "00:05:00";  // 5mins
+	public final static String defaultExpireTime = "00:05:00";  // 5mins
 	
 	public static void expireRemovedDeals(Connection conn, String vendor){
+		expireRemovedDeals(conn, vendor, defaultExpireTime);
+	}
+	
+	public static void expireRemovedDeals(Connection conn, String vendor, String expireTime){
 		String insertDealHistory = "INSERT INTO deals_history "
 				+ "(did, vendor, title, link_url, start_date, end_date, utc_offset, updated_at, items) "
 				+ "(SELECT did, vendor, title, link_url, start_date, end_date, utc_offset, updated_at, items "
