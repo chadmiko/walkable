@@ -35,7 +35,7 @@ Padrino.after_load do
   Encoding.default_internal = nil
   Encoding.default_external = 'ASCII-8BIT'
 
-  DataMapper.finalize
+  #DataMapper.finalize
 end
 
 Padrino.load!
