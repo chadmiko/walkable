@@ -83,6 +83,8 @@ public class RefreshYelp {
 
 	public static void main(String[] args) {
 
+		String expireTime = "25:05:00"; //Remove Deals if they haven't been updated in 25 hours
+		
 		Connection conn = null;
 
 		try {
@@ -91,7 +93,7 @@ public class RefreshYelp {
 				System.out.println("Processed " + numDeals + " total deals");
 				conn = DatabaseUtil.getConnection();
 				ExpireDeals.expireDealsByDate(conn);
-				ExpireDeals.expireRemovedDeals(conn, Deal.VENDOR_YELP);
+				ExpireDeals.expireRemovedDeals(conn, Deal.VENDOR_YELP, expireTime);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -22,8 +22,8 @@ public class YelpParse {
 	public static YelpDealObject parse(String json){
 		YelpDealObject object = null;
 		try {
-		Gson gson = new GsonBuilder().create();
-		object = gson.fromJson(json, YelpDealObject.class);
+			Gson gson = new GsonBuilder().create();
+			object = gson.fromJson(json, YelpDealObject.class);
 		} catch (com.google.gson.JsonSyntaxException e){
 			e.printStackTrace();
 		}
@@ -79,9 +79,11 @@ public class YelpParse {
 
 							//Set Options
 							DealItems.Options dealOpts = items.new Options();
-							String[] title = yDeal.what_you_get.split("\nTwo options");
-							if (title != null){
-								dealOpts.setTitle(title[0]);
+							if (yDeal.what_you_get != null){
+								String[] title = yDeal.what_you_get.split("\nTwo options");
+								if (title != null){
+									dealOpts.setTitle(title[0]);
+								}
 							}
 							dealOpts.setBuyUrl(yOption.purchase_url);
 							opts.add(dealOpts);
