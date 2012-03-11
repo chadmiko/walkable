@@ -19,7 +19,7 @@ class Deal
     lat = 41.9386909 if lat.nil?
     lon = -87.6412235 if lon.nil?
     radius = 5 if radius.nil?
-    repository(:default).adapter.select('SELECT deals.*, locations.*, FORMAT(( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians( ? ) ) + sin( radians( ? ) ) * sin( radians( lat ) ) ) ), 2) AS distance FROM deals JOIN deal_locations on deals.did = deal_locations.did JOIN locations on deal_locations.lid = locations.lid HAVING distance < ? ORDER BY distance LIMIT 200', lat, lon, lat, radius.to_i)
+    repository(:default).adapter.select('SELECT deals.*, locations.*, ( 3959 * acos( cos( radians(?) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians( ? ) ) + sin( radians( ? ) ) * sin( radians( lat ) ) ) ) AS distance FROM deals JOIN deal_locations on deals.did = deal_locations.did JOIN locations on deal_locations.lid = locations.lid HAVING distance < ? ORDER BY distance LIMIT 200', lat, lon, lat, radius.to_i)
   end
 
   #
