@@ -10,7 +10,7 @@ import org.scribe.model.Verb;
  * 
 
 /**
- * Example for accessing the CommissionJunction API.
+ * Example for accessing the LivingSocial API.
  * http://help.cj.com/en/web_services/web_services.htm#product_catalog_search_service_rest.htm
  */
 public class CommissionJunction {

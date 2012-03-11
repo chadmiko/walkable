@@ -21,7 +21,7 @@ import me.walkable.util.Geocode.OpenStreetMapObject;
  *
  */
 public class Location {
-
+	
 	private int lid; // Location ID
 	private String street;
 	private String street2;
@@ -180,6 +180,20 @@ public class Location {
 			this.radLng = Math.toRadians(this.lng);
 			this.cosLat = cosLat;
 
+		}
+		
+		@Override
+		public String toString() {
+			String locString = "lid:\t" + lid
+					+ "\nstreet:\t" + street
+					+ "\nstreet2:\t" + street2
+					+ "\nneighborhood:\t" + neighborhood
+					+ "\nzip:\t" + zip
+					+ "\nlat:\t" + lat
+					+ "\nlng:\t" + lng
+					+ "\nname:\t" + name
+					+ "\nurl:\t" + url;
+			return locString;
 		}
 
 		public int getLid() {
