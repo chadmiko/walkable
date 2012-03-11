@@ -11,202 +11,202 @@ package me.walkable.groupon;
 public class GrouponData {
 
 	//Inner Classes
-	public class GrouponRatings {
+	protected class GrouponRatings {
 
-		public String linkText;
-		public int reviewsCount;
-		public String id;
-		public String url;
-		public double rating;
+		protected String linkText;
+		protected int reviewsCount;
+		protected String id;
+		protected String url;
+		protected double rating;
 		GrouponRatings(){};
 	}
 
-	public class GrouponDealTypes {
+	protected class GrouponDealTypes {
 
-		public String name;
-		public String id;
+		protected String name;
+		protected String id;
 		GrouponDealTypes(){};
 	}
 
-	public class GrouponMerchant {
+	protected class GrouponMerchant {
 
-		public GrouponRatings[] ratings;
-		public String name;
-		public String id;
-		public String websiteUrl;
+		protected GrouponRatings[] ratings;
+		protected String name;
+		protected String id;
+		protected String websiteUrl;
 		GrouponMerchant(){};
 	}
 
-	public class GrouponTextAd {
+	protected class GrouponTextAd {
 
-		public String line1;
-		public String line2;
-		public String headline;	
+		protected String line1;
+		protected String line2;
+		protected String headline;	
 		GrouponTextAd(){};
 	}
 
-	public class GrouponSays {
+	protected class GrouponSays {
 
-		public String websiteContent;
-		public String websiteContentHtml;
-		public String title;
-		public String id;
-		public String emailContentHtml;
+		protected String websiteContent;
+		protected String websiteContentHtml;
+		protected String title;
+		protected String id;
+		protected String emailContentHtml;
 		GrouponSays(){};
 	}
 
-	public class GrouponDivision {
+	protected class GrouponDivision {
 
-		public String timezone;
-		public int timezoneOffsetInSeconds;
-		public String name;
-		public String id;
-		public double lng;
-		public double lat;
+		protected String timezone;
+		protected int timezoneOffsetInSeconds;
+		protected String name;
+		protected String id;
+		protected double lng;
+		protected double lat;
 		GrouponDivision(){};
 	}
 
-	public class GrouponArea{
+	protected class GrouponArea{
 		GrouponArea(){};
 	}
 
 
-	public class GrouponTags{
-		public String name;
+	protected class GrouponTags{
+		protected String name;
 		GrouponTags(){};
 	}
 	
-	public class GrouponChannel{
+	protected class GrouponChannel{
 		GrouponChannel(){};
 	}
 	
-	public class GrouponPrice {
-		public String amount;
-		public String currencyCode;
-		public String formattedAmount;
+	protected class GrouponPrice {
+		protected int amount;
+		protected String currencyCode;
+		protected String formattedAmount;
 		GrouponPrice(){};
 	}
 
-	public class GrouponValue{
-		public int amount;
-		public String currencyCode;
-		public String formattedAmount;
+	protected class GrouponValue{
+		protected int amount;
+		protected String currencyCode;
+		protected String formattedAmount;
 		GrouponValue(){};
 	}
 
-	public class GrouponLocation {
+	protected class GrouponLocation {
 
-		public String city;
-		public String neighborhood;
-		public String state;
-		public String streetAddress1;
-		public String streetAddress2;
-		public String name;
-		public String country;
-		public double lat;
-		public double lng;
-		public String phoneNumber;
-		public String postalCode;
+		protected String city;
+		protected String neighborhood;
+		protected String state;
+		protected String streetAddress1;
+		protected String streetAddress2;
+		protected String name;
+		protected String country;
+		protected double lat;
+		protected double lng;
+		protected String phoneNumber;
+		protected String postalCode;
 		
 		GrouponLocation(){};
 	}
 
-	public class GrouponDetails{
-		public String description;
+	protected class GrouponDetails{
+		protected String description;
 		GrouponDetails(){};
 	}
 
-	public class GrouponDiscount{
+	protected class GrouponDiscount{
 
-		public int amount;
-		public String currencyCode;
-		public String formattedAmount;
-		public int soldQuantity;
+		protected int amount;
+		protected String currencyCode;
+		protected String formattedAmount;
+		protected int soldQuantity;
 		
 		GrouponDiscount(){};
 	}
 	
-	public class GrouponCustomFields{
+	protected class GrouponCustomFields{
 		
 		GrouponCustomFields(){};
 	}
 	
-	public class GrouponOptions {
-		public GrouponCustomFields[] customFields;
-		public String expiresAt;
-		public GrouponPrice price;
+	protected class GrouponOptions {
+		protected GrouponCustomFields[] customFields;
+		protected String expiresAt;
+		protected GrouponPrice price;
 		
-		public int maximumPurchaseQuantity;
-		public String buyUrl;
-		public int discountPercent;
-		public int initialQuantity;
-		public int remainingQuantity;
-		public boolean isLimitedQuantity;
-		public GrouponValue value;
+		protected int maximumPurchaseQuantity;
+		protected String buyUrl;
+		protected int discountPercent;
+		protected int initialQuantity;
+		protected int remainingQuantity;
+		protected boolean isLimitedQuantity;
+		protected GrouponValue value;
 	
-		public GrouponLocation[] redemptionLocations;
+		protected GrouponLocation[] redemptionLocations;
 	
-		public String title;
-		public String externalUrl;
-		public GrouponDetails[] details;
+		protected String title;
+		protected String externalUrl;
+		protected GrouponDetails[] details;
 		
-		public String soldQuantityMessage;
-		public int minimumPurchaseQuantity;
-		public boolean isSoldOut;
-		public int id;
-		public GrouponDiscount discount;
+		protected String soldQuantityMessage;
+		protected int minimumPurchaseQuantity;
+		protected boolean isSoldOut;
+		protected int id;
+		protected GrouponDiscount discount;
 		
 		GrouponOptions(){};
 	}
 	
 	//Member variables
-	public String vip;
-	public String type;
-	public String grouponRating;
-	public GrouponDealTypes[] dealTypes;
+	protected String vip;
+	protected String type;
+	protected String grouponRating;
+	protected GrouponDealTypes[] dealTypes;
 
-	public String pitchHtml;
-	public String smallImageUrl;
-	public String status;
-	public String highlightsHtml;
-	public String grid4ImageUrl;
-	public String placementPriority;
-	public String announcementTitle;
-	public GrouponMerchant merchant;
+	protected String pitchHtml;
+	protected String smallImageUrl;
+	protected String status;
+	protected String highlightsHtml;
+	protected String grid4ImageUrl;
+	protected String placementPriority;
+	protected String announcementTitle;
+	protected GrouponMerchant merchant;
 
-	public String isAutoRefundEnabled;
-	public String grid6ImageUrl;
-	public String title;
-	public String redemptionLocation;
-	public String dealUrl;
-	public GrouponTextAd textAd;
+	protected String isAutoRefundEnabled;
+	protected String grid6ImageUrl;
+	protected String title;
+	protected String redemptionLocation;
+	protected String dealUrl;
+	protected GrouponTextAd textAd;
 
-	public String startAt;
-	public String soldQuantityMessage;
-	public GrouponSays says;
+	protected String startAt;
+	protected String soldQuantityMessage;
+	protected GrouponSays says;
 
-	public String largeImageUrl;
-	public String shippingAddressRequired;
-	public String locationNote;
-	public String tippingPoint;
-	public String isSoldOut;
-	public String endAt;
-	public GrouponDivision division;
+	protected String largeImageUrl;
+	protected String shippingAddressRequired;
+	protected String locationNote;
+	protected String tippingPoint;
+	protected String isSoldOut;
+	protected String endAt;
+	protected GrouponDivision division;
 
-	public GrouponArea[] areas;
-	public String mediumImageUrl;
-	public GrouponTags[] tags; 
+	protected GrouponArea[] areas;
+	protected String mediumImageUrl;
+	protected GrouponTags[] tags; 
 
-	public boolean isNowDeal;
-	public String finePrint;
-	public GrouponChannel[] channels;
-	public String id;
-	public String tippedAt;
-	public int soldQuantity;
-	public GrouponOptions[] options;
+	protected boolean isNowDeal;
+	protected String finePrint;
+	protected GrouponChannel[] channels;
+	protected String id;
+	protected String tippedAt;
+	protected int soldQuantity;
+	protected GrouponOptions[] options;
 		
-	public boolean isTipped;
-	public String sidebarImageUrl;
+	protected boolean isTipped;
+	protected String sidebarImageUrl;
 
 	GrouponData(){};
 

@@ -2,8 +2,24 @@ package me.walkable;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+import me.walkable.cj.CommissionJunction;
+import me.walkable.cj.CommissionJunctionObject;
+import me.walkable.cj.CommissionJunctionParse;
+import me.walkable.cj.giltcity.GiltCityParse;
 import me.walkable.foursquare.*;
 import me.walkable.groupon.*;
+import me.walkable.util.CategoryTree;
+import me.walkable.util.UtcTime;
+import me.walkable.util.WriteArchiveFile;
 import me.walkable.yelp.*;
 
 /**
@@ -19,75 +35,10 @@ import me.walkable.yelp.*;
  */
 public class ApiCall {
 
-	static final String yConsumerKey = "j0sM9V8eFDcYn0PmBTdqTA";
-	static final String yConsumerSecret = "ihXDy_ikwu8DFZEjk4PiK754Y7k"; 
-	static final String yToken = "rw2ExtIjLfYk-BAp2mF-wUwh3-4IUGKi";
-	static final String yTokenSecret = "5yNUcFAF53iGqkD7ROwHskqm2ys";
-
-	static final String gClientID = "8ad4ef59d1e755157121d9ac5f3ff16aeb89d93d";
-
-	//FourSquare
-	//	Client ID GXJ3J33W0NXGVAGGLHBORLNQHL14HCIZNTWKC2XU2RK510VL
-	//	Client Secret 1VKEVJQZHMF22ZZTM0WIX05U2KH32T02WJHSINTDHKKOC2CN
-
 	static final String fourClientID = "GXJ3J33W0NXGVAGGLHBORLNQHL14HCIZNTWKC2XU2RK510VL";
 	static final String fourSecret = "1VKEVJQZHMF22ZZTM0WIX05U2KH32T02WJHSINTDHKKOC2CN";
+	
 
-	public static void getYelp(){
-		//		double lat = 41.9485056;
-		//		double lon = -87.6616156;
-
-		//		//Yelp Example
-		Yelp yelp = new Yelp(yConsumerKey, yConsumerSecret, yToken ,yTokenSecret);
-		String yResponse;
-		//		yResponse = yelp.search("mexican", lat, lon);
-		//		yResponse = yelp.getBusiness("uncommon-ground-chicago");
-		int processed = 0;
-		int total = yelp.getNumberofDeals("Chicago"); //placeholder
-		while (processed < total){
-			yResponse = yelp.getDeals("Chicago", String.valueOf(processed));
-			YelpDealObject yObj = YelpParse.parse(yResponse);
-			processed += yObj.getNumberOfDeals();
-//			total = yObj.getTotalNumberOfDeals();
-			System.out.println(processed + "/" + total + " Yelp deals processed " );
-		}
-		//		System.out.println(yResponse);
-
-
-		//		yResponse = yelp.search("Chicago", "25");
-
-//		FileWriter writer; // I orginally used BufferedWriter - but it couldn't write everything to the file - kept creating incomplete files.
-//		try { 
-//			String fileName = "./yelp.json";
-//			writer = new FileWriter ( fileName ) ;
-//			writer.write(yResponse);
-//			writer.close();
-//		} catch (IOException x) {
-//			System.err.format("IOException: %s%n", x);
-//		}
-
-	}
-
-	public static void getGroupon(){
-		//Groupon Example
-		Groupon groupon = new Groupon(gClientID);
-		String gResponse = groupon.search("chicago");
-		//		System.out.println(gResponse);
-
-		FileWriter gWriter; // I orginally used BufferedWriter - but it couldn't write everything to the file - kept creating incomplete files.
-		try { 
-			String fileName = "./groupon.json";
-			gWriter = new FileWriter ( fileName ) ;
-			gWriter.write(gResponse);
-			gWriter.close();
-		} catch (IOException x) {
-			System.err.format("IOException: %s%n", x);
-		}
-
-		GrouponObject obj = GrouponParse.parse(gResponse);
-		GrouponParse.InsertGrouponData(obj);
-		System.out.println(obj.deals.length + " Groupon deals processed");
-	}
 
 	public static void getFourSquare(){
 		String lat = "41.9485056";
@@ -111,13 +62,18 @@ public class ApiCall {
 
 	}
 
+	public static void getGiltCity(){
+		CommissionJunction cj = new CommissionJunction();
+		String cjXML = cj.search(CommissionJunction.VENDOR_GILT_CITY);
+		WriteArchiveFile.writeFile("GiltCity", cjXML, ".xml"); //Write to file
+		ArrayList<CommissionJunctionObject> cjList = CommissionJunctionParse.parse(cjXML);
+		int numGilt = GiltCityParse.parse(cjList);
+		System.out.println("Done inserting/updating " + numGilt + " deals");
+	}
+	
 	public static void main(String[] args) {
-
-		getYelp();
-		//		getGroupon();
 		//		getFourSquare();
-
-
+		getGiltCity();
 
 	}
 

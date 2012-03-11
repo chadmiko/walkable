@@ -8,41 +8,21 @@ import org.scribe.model.Verb;
 /**
  * @author Christopher Butera
  * 
-
-/**
- * Example for accessing the Groupon API.
  */
+
 public class Groupon {
 
-	private final String baseURL = "http://api.groupon.com/v2/deals";
-	
-	//OAuthService service;
-	//Token accessToken;
-	private String clientID;
-	//private final String format = ".json";
+	private final String baseURL = "http://api.groupon.com/v2/deals";	
+	//THIS FIELD SHOULD BE PROTECTED!!!
+	private static final String clientID = "8ad4ef59d1e755157121d9ac5f3ff16aeb89d93d";
 
-	/**
-	 * Setup the Yelp API OAuth credentials.
-	 *
-	 * OAuth credentials are available from the developer site, under Manage API access (version 2 API).
-	 *
-	 * @param consumerKey Consumer key
-	 * @param consumerSecret Consumer secret
-	 * @param token Token
-	 * @param tokenSecret Token secret
-	 */
-	public Groupon(String clientID) {
+	public Groupon() {
 //		this.service = new ServiceBuilder().provider(GrouponApi.class).apiKey(clientID).apiSecret("").build();
-		this.clientID = clientID;
+//		this.clientID = clientID;
 	}
 
 	//Need to revisit once we get affiliate ID.
 	
-	/**
-	 * Search with term.
-	 *
-	 * @param term Search term
-	 */
 	public String search(String city) {
 		OAuthRequest request = new OAuthRequest(Verb.GET, baseURL);
 		request.addQuerystringParameter("client_id", clientID);
@@ -50,6 +30,5 @@ public class Groupon {
 		Response response = request.send();
 		return response.getBody();
 	}
-
 	
 }
