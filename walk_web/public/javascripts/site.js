@@ -83,8 +83,8 @@ var Locator = Backbone.Model.extend({
       alert(msg);
     }
   },
-  start: function() {
-    console.log("calling locate()");
+  read: function() {
+    console.log("calling read()");
     try {
       if (!navigator.geolocation) 
         throw new Error("Geolocation not supported.  Upgrade your browser.");
@@ -188,7 +188,7 @@ var Deals = Backbone.Collection.extend({
     this.locator = new Locator();
     this.locator.on("locator:changed", this.load);
     this.load();
-    this.locator.watch();  //have to load defaults first, then watch
+    this.locator.read();  //have to load defaults first, then read
   },
   //Custom fetch, just easier this way not knowing internals well
   load: function() {
@@ -247,28 +247,31 @@ var Deals = Backbone.Collection.extend({
 
 var HeaderView = Backbone.View.extend({
   el: '#header',
-  initialize: function(opts) {
-    this.walkable();
+  events: {
+  "click #sync": "update", 
   },
-  walkable: function() {
-    $('#vendor').html('walkable');
+  initialize: function(opts) {
+    this.sync = $('#sync');
+  },
+  update: function() {
+    this.model.read();
   }
 });
 
 var DealHeaderView = Backbone.View.extend({
   tagName: 'div',
   className: 'deal-header',
-  template: _.template('<span class="deal-vendor"><%= vendor %></span><span class="deal-title"><%= title %></span><br /><span class="deal-merchant"><%= name %></span>&nbsp;<span class="deal-dist"><%= distance %> mi.</span>'),
+  template: _.template('<div class="left ptr"><h4 class="deal-merchant"><%= name %>&nbsp;<small class="deal-dist"><%= distance %> mi.</small></h4><span class="deal-title"><%= title %></span></div><div class=""><span class="deal-vendor"><%= vendor %></span></div>'),
   initialize: function(opts) {
     _.bindAll(this, 'render');
   },
   render: function() {
     //crappy yelp hack
-    if (this.model.get('vendor') == 'yelp') {
+    /*if (this.model.get('vendor') == 'yelp') {
       tmp = this.model.get('title');
       this.model.set('title', this.model.get('name'));
       this.model.set('name', tmp);
-    }
+    }*/
     
     $(this.el).append(this.template(this.model.toJSON()));
     return this;
@@ -289,8 +292,8 @@ var DealBodyView = Backbone.View.extend({
 });
 var DealOptionsView = Backbone.View.extend({
   tagName: 'ul',
-  className: 'deal-options',
-  template: _.template('<li><span><%= title %></span><a href="<%= buyUrl %>" title="Buy It!" class="btn btn-primary">Buy!</a></li>'),
+  className: 'deal-options unstyled',
+  template: _.template('<li><div class="row"><div class="span3"><%= title %></div><div class="span1"><a href="<%= buyUrl %>" title="Buy It!" class="btn btn-primary btn-mini">Buy!</a></div></div></li>'),
   template_no_title: _.template('<li><a href="<% buyUrl %>" title="Buy It!" class="btn btn-primary">Buy!</a></li>'),
   template_no_url:   _.template('<li><%= title %></li>'),
   initialize: function(opts) {
@@ -333,11 +336,13 @@ var DealOptionsView = Backbone.View.extend({
 var DealView = Backbone.View.extend({
   tagName: 'li',
   events: {
-    "click .deal-title"  : "toggleActive"
+    "click .ptr"  : "toggleActive"
   },
   initialize: function(opts) {
     _.bindAll(this, 'render');
     this.attributes = {"data-id": this.model.get('did')};
+    dist = this.model.get('distance');
+    this.model.set('distance', dist.toFixed(2));
     this._header = new DealHeaderView({model: this.model});
     this._body   = new DealBodyView({model: this.model});
   },
@@ -383,7 +388,7 @@ var App = Backbone.Router.extend({
     "deals/:market" : "list",
     "deals/:market/:id" : "show",
     "about/:page"   : "about",
-    "*splat"        : "notFound"
+    "/*splat"        : "notFound"
   },
   initialize: function(el, opts) {
     var self = this;
@@ -393,11 +398,12 @@ var App = Backbone.Router.extend({
     this._deals = new Deals(opts);
     this._views = {
       deals: new DealsView({collection: this._deals}),
-      header: new HeaderView(),
+      header: new HeaderView({model: this._deals.locator}),
     };
     //this._deals.load();
  
     $('h1').hide();
+    $('.nav').show();
     Backbone.history.start({pushState: true});
   },
 
@@ -412,7 +418,8 @@ var App = Backbone.Router.extend({
     //this._metro.bubble("show");
   },
   notFound: function(splat) {
-    alert("Page not found");
+    console.log(splat);
+              alert("Page not found");
   } 
 });
 
