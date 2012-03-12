@@ -114,7 +114,6 @@ public class LivingSocial {
 							}
 							//					}
 							if (loc != null){
-														System.out.println(loc);
 								int did = deal.insertDeal(conn);
 								int lid = loc.insertLocation(conn);
 								DealByLocation dealByLocation = new DealByLocation();
