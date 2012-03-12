@@ -21,11 +21,13 @@ public class YelpParse {
 
 	public static YelpDealObject parse(String json){
 		YelpDealObject object = null;
-		try {
-			Gson gson = new GsonBuilder().create();
-			object = gson.fromJson(json, YelpDealObject.class);
-		} catch (com.google.gson.JsonSyntaxException e){
-			e.printStackTrace();
+		if (json != null){
+			try {
+				Gson gson = new GsonBuilder().create();
+				object = gson.fromJson(json, YelpDealObject.class);
+			} catch (com.google.gson.JsonSyntaxException e){
+				e.printStackTrace();
+			}
 		}
 		return object;
 	}

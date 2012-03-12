@@ -1,5 +1,7 @@
 package me.walkable.yelp;
 
+import java.util.Map;
+
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.OAuthRequest;
 import org.scribe.model.Response;
@@ -22,13 +24,13 @@ import com.google.gson.GsonBuilder;
  * Example for accessing the Yelp API.
  */
 public class Yelp {
-	
+
 	public final static String CHICAGO = "Chicago";
-	
+
 	private OAuthService service;
 	private Token accessToken;
 	private final String searchURL = "http://api.yelp.com/v2/search";
-	
+
 	//THESE NEED TO BE KEPT PRIVATE!!!
 	private static final String consumerKey = "j0sM9V8eFDcYn0PmBTdqTA";
 	private static final String consumerSecret = "ihXDy_ikwu8DFZEjk4PiK754Y7k"; 
@@ -84,31 +86,38 @@ public class Yelp {
 		Response response = request.send();
 		return response.getBody();
 	}
-	
+
 	public int getNumberofDeals(String city){
 		OAuthRequest request = new OAuthRequest(Verb.GET, searchURL);
 		request.addQuerystringParameter("location", city);
 		request.addQuerystringParameter("deals_filter","true");
 		this.service.signRequest(this.accessToken, request);
 		Response response = request.send();
-		Gson gson = new GsonBuilder().create();
-		YelpDealObject object = gson.fromJson(response.getBody(), YelpDealObject.class);
-//		return response.getBody();
-		return object.getTotalNumberOfDeals();
+		if (response.isSuccessful()){
+			Gson gson = new GsonBuilder().create();
+			YelpDealObject object = gson.fromJson(response.getBody(), YelpDealObject.class);		
+			return object.getTotalNumberOfDeals();
+		}
+		else {
+			Map<String, String> errors = response.getHeaders();
+			System.out.println("Errors Size= " + errors.size());
+			return 0;
+		}
+
 	}
-	
+
 	//http://www.yelp.com/developers/documentation/v2/search_api
-//	public String getDeals(String city, String offset){
-//		OAuthRequest request = new OAuthRequest(Verb.GET, searchURL);
-//		request.addQuerystringParameter("location", city);
-//		request.addQuerystringParameter("deals_filter","true");
-//		request.addQuerystringParameter("limit", "20"); //This is the max
-//		request.addQuerystringParameter("sort", "1"); //Sort mode: 0=Best matched (default), 1=Distance, 2=Highest Rated.
-//		request.addQuerystringParameter("offset", offset);
-//		this.service.signRequest(this.accessToken, request);
-//		Response response = request.send();
-//		return response.getBody();		
-//	}
+	//	public String getDeals(String city, String offset){
+	//		OAuthRequest request = new OAuthRequest(Verb.GET, searchURL);
+	//		request.addQuerystringParameter("location", city);
+	//		request.addQuerystringParameter("deals_filter","true");
+	//		request.addQuerystringParameter("limit", "20"); //This is the max
+	//		request.addQuerystringParameter("sort", "1"); //Sort mode: 0=Best matched (default), 1=Distance, 2=Highest Rated.
+	//		request.addQuerystringParameter("offset", offset);
+	//		this.service.signRequest(this.accessToken, request);
+	//		Response response = request.send();
+	//		return response.getBody();		
+	//	}
 
 	public String getDeals(String city, String category){
 		OAuthRequest request = new OAuthRequest(Verb.GET, searchURL);
@@ -121,7 +130,7 @@ public class Yelp {
 		Response response = request.send();
 		return response.getBody();		
 	}
-	
+
 	public YelpDealObject getDeals(String city, String offset, String category){
 		OAuthRequest request = new OAuthRequest(Verb.GET, searchURL);
 		request.addQuerystringParameter("location", city);
@@ -132,10 +141,17 @@ public class Yelp {
 		request.addQuerystringParameter("offset", offset);
 		this.service.signRequest(this.accessToken, request);
 		Response response = request.send();
-//		System.out.println(response.getBody());
-		return YelpParse.parse(response.getBody());		
+		if (response.isSuccessful()){
+			//		System.out.println(response.getBody());
+			return YelpParse.parse(response.getBody());		
+		}
+		else {
+			System.out.println("Error retrieving: " + category + " offset:" + offset);
+			System.out.println(response.getBody());
+			return null;
+		}
 	}
 
-	
-	
+
+
 }

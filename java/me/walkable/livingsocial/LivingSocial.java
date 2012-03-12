@@ -1,6 +1,7 @@
 package me.walkable.livingsocial;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -138,7 +139,7 @@ public class LivingSocial {
 		} catch (SAXException e) {
 			e.printStackTrace();
 		}
-
+		
 		return numDeals;
 	}
 
