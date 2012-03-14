@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import me.walkable.cj.CommissionJunctionObject;
 import me.walkable.db.DatabaseUtil;

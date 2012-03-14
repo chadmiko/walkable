@@ -25,12 +25,14 @@ public class RefreshYelp {
 	public static int yelpCategoryIterate(Yelp yelp, CategoryTree tree) throws Exception{
 		int numDeals = 0;
 		if (tree.isLeaf()){
+			Thread.sleep(30000); //Sleep for 30
 			YelpDealObject yObj = yelp.getDeals(Yelp.CHICAGO, "0", tree.getCategory());
 			if (yObj != null) {
 				System.out.println("Found " + yObj.getTotalNumberOfDeals() + " in leaf category: " + tree.getCategory());
 				YelpParse.InsertYelpData(yObj);
 				if (yObj.getNumberOfDeals() != yObj.getTotalNumberOfDeals()){
 					if (yObj.getTotalNumberOfDeals() <= 40){
+						Thread.sleep(30000); //Sleep for 30
 						yObj = yelp.getDeals(Yelp.CHICAGO, "20", tree.getCategory());
 						yObj = YelpParse.parse(tree.getUnparsedDeals());	
 						YelpParse.InsertYelpData(yObj);
@@ -45,7 +47,7 @@ public class RefreshYelp {
 			}
 		}
 		else {
-
+			Thread.sleep(30000); //Sleep for 30
 			YelpDealObject yObj = yelp.getDeals(Yelp.CHICAGO, "0", tree.getCategory());
 			if (yObj != null){
 				System.out.println("Found " + yObj.getTotalNumberOfDeals() + " in branch category: " + tree.getCategory());
@@ -54,7 +56,7 @@ public class RefreshYelp {
 				}
 				else if (yObj.getNumberOfDeals() != yObj.getTotalNumberOfDeals() && yObj.getTotalNumberOfDeals() < 40) {
 					YelpParse.InsertYelpData(yObj);
-
+					Thread.sleep(30000); //Sleep for 30
 					yObj = yelp.getDeals(Yelp.CHICAGO, "20", tree.getCategory());
 					YelpParse.InsertYelpData(yObj);
 				}
