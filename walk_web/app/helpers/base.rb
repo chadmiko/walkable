@@ -16,4 +16,12 @@ WalkWeb.helpers do
   def pjax?
     env['HTTP_X_PJAX']
   end
+
+  def vendors
+    [      
+      {:name => "groupon", :imgUrl => "", :active => false},
+      {:name => "yelp", :imgUrl => "", :active => false},
+      {:name => "living_social", :imgUrl => "", :active => false}
+    ].to_json
+  end
 end
