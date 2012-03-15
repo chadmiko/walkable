@@ -3,45 +3,38 @@
   <title><%= title %></title>
   <meta name="description" content="">
   <meta name="author" content="">
-  
-  <%= partial('layouts/head2') %>  
+  <meta name="viewport" content="width=device-width, initial-scale=1;"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
 
-<!-- 
-  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
-  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.js"></script>
+
+  <!-- Javascript -->
+  <!-- 
+  <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+  <script src="http://code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1.min.js"></script> 
   -->
+  <script src="/javascripts/application.js?<%= Time.now.to_i %>"></script>
+  <script src="/javascripts/bootstrap-tab.js"></script>
+  <script src="/javascripts/site.js?<%= Time.now.to_i %>"></script>
+
+  <!-- CSS
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0-rc.1/jquery.mobile-1.1.0-rc.1.min.css" />
+  -->
+  <link rel="stylesheet" href="/stylesheets/bootstrap.full.css"/>
+  <style type="text/css">
+    .hidden { display:none;}
+    .block  {display:block;}
+  </style>
+  <link rel="stylesheet" href="/stylesheets/site.css?<%= Time.now.to_i %>" />
+
 </head> 
 <body>
-  <h1>Walkable.me</h1>
-  <div id="header" class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-      <div class="container">
-        <ul class="vendors nav">
-          <li class="dropdown">
-          <a class="vendor" href="#" data-toggle="dropdown">walkable <b class="caret"></b></a>
-            <ul class="dropdown-menu"> 
-              <li><a class="yelp" href="#" data-toggle="dropdown">yelp</a></li>
-              <li><a class="groupon" href="#" data-toggle="dropdown">groupon</a></li>
-            </ul>
-           </li>
-        </ul>
-        
-        <ul class="hidden nav pull-right">
-         <li><a href="#" id="sync"><i class="icon-white icon-refresh"></i>&nbsp;Refresh</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  
-  <div id="wrapper" class="container">
-    <div id="main" role="main">
-      <%= yield %>
-    </div>
-    <div id="loading" class="modal">
-      <div class="modal-header"></div><div class="modal-body">Loading...</div>
-    </div>
-  </div> <!-- //#wrapper -->
+  <div id="walkapp">
+    <%= yield %>
 
+  </div>
+  <footer id="footer">
+    <a href="http://www.walkable.me" title="Walkable deals">Walkable.me</a>&nbsp;-&nbsp;Hyper-local Deals Done Right.</a> 
+  </footer>
   <script type="text/javascript">
     var opts = {
       deals: {

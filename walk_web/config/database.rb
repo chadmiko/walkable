@@ -1,8 +1,8 @@
 DataMapper.logger = logger
 DataMapper::Property::String.length(255)
 DataMapper::Model.raise_on_save_failure = true
+
 case Padrino.env
-=begin
   when :development then DataMapper.setup(:default, {
     :adapter => 'mysql',
     :username => 'java_walk',
@@ -11,7 +11,7 @@ case Padrino.env
     :database => "walk",
     :password => "daburgh"
   })
-=end
+=begin
   when :development then DataMapper.setup(:default, {
     :adapter => 'mysql',
     :username => 'java_walk',
@@ -20,6 +20,7 @@ case Padrino.env
     :database => 'walk',
     :password => 'daburgh'
    })
+=end
   when :production then DataMapper.setup(:default, {
     :adapter => 'mysql',
     :username => 'java_walk',

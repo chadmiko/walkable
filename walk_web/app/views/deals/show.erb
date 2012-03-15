@@ -1,34 +1,57 @@
-<% title "Deal no longer available" %>
-
-<div class="deal" style="text-align:center">
-
-<% if @deal %>
-  <% title @deal.title + " at " + @merchant  %>  
-  <h3><%= @deal.title %> </h3>
-  (check title for merch name dupe else output)
-  <div class="geo hide" data-ll='{"lat": 44, "lon": -87}'>  </div> 
-  
-    <div style="height:40px; background:#ddd; width:300px; margin:0 auto;">
-      40% savings
+  <div id="blank" class="active">
+    <div class="page-header-wrap">
+      <div class="container">
+        <span class="brand">Walkable</span>
+      </div>
     </div>
-    <img src="http://placehold.it/200x300" height="200" width="300" /> 
-    <br /><small>locations on map</small>
-
-  <!--
-  <div data-role="footer" data-position="fixed" data-fullscreen="true">
-    <div data-role="navbar">
-      <ul>
-        <li><a href="#">Summary</a></li>
-        <li><a href="#">Share</a></li>
-        <li><a href="#">Save</a></li>
-      </ul>
+    <div class="page-body container">
+      Loading...
     </div>
   </div>
-  -->  
-<% else %>
-
-  <div class="content-primary"><h3>Deal not found</h3> <p>Sorry, requested deal no longer available</p></div>
-
-<% end %>
-
-</div>
+  
+  <div id="settings">
+    <div class="page-header-wrap">
+      <div class="container">
+        <span class="brand">Walkable</span>
+        <div class="nav pull-right">
+          <a href="#" class="done btn btn-success btn-small">Done <i class="icon-white icon-ok"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="page-body container">
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#set_vendors" data-toggle="tab">Select Brand</a></li>
+        <!-- <li><a href="#set_options" data-toggle="tab">Options</a></li> -->
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane active" id="set_vendors">
+          <ul>
+          </ul>
+        </div>
+       <!--  <div class="tab-pane" id="set_options">
+          <ul>
+          </ul>
+        </div> -->
+      </div>
+    </div>
+  </div>
+  <div id="deals">
+    <div class="page-header-wrap">
+      <div class="container">
+        <span id="brand">Walkable</span>
+        <ul class="nav pull-right">
+          <li><a href="#" id="sync">Update</a></li>
+          <li><a href="#" class="settings">Settings</a></li>  
+        </ul>
+      </div>
+    </div>
+    <div class="page-body container">
+      <ul id="deal_items" class="unstyled"></ul>
+    </div>
+    <div class="container page-footer">
+      <span class="brand groupon">Groupon</span>
+      <span class="brand yelp">Yelp</span>
+      <span class="brand living_social">Living Social</span>
+      <span class="brand gilt_city">Gilt City</span>
+    </div>
+  </div>

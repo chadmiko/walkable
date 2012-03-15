@@ -1,48 +1,297 @@
-#main {
-  margin-top:40px;
- }
-a:hover i {
+body {
+  background: #b0b0b0;
+}
+a {
+  color: #503179;
+}
+#footer {
+  text-align:center;
+  padding:20px 0;
+}
+#footer, #footer a, 
+#footer a:visited {
+  color:#777;
+  font-size:12px;
 }
 
-#header .vendor {
-  width:150px;
+#deals .nav a {
+  color:#555;
+  text-decoration:none;
 }
-#deals {
-  border-top:1px solid #eee;
+#deals .nav a:hover {
+  color:#333;
 }
-#deals li {
-  border-bottom: 1px solid #eee;
+#deal_items li {
+  border-bottom: 1px solid #ddd;
   border-left: 1px solid #eee;
   border-right: 1px solid #eee;
+  background: #eee;
+  padding-bottom:6px;
 }
-#deals li li {
+#deal_items li:last-child {
+  border-bottom:0;
+}
+#deal_items {
+  background: #eee;
+  padding:3px;
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
+  -webkit-border-top-right-radius: 8px;
+  -webkit-border-top-left-radius: 8px;
+  -moz-border-radius-topright: 8px;
+  -moz-border-radius-topleft: 8px;
+  border-bottom-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+  -webkit-border-bottom-right-radius: 8px;
+  -webkit-border-bottom-left-radius: 8px;
+  -moz-border-radius-bottomright: 8px;
+  -moz-border-radius-bottomleft: 8px;
+}
+#deal_items table {
+  width:100%;
+}
+
+#deal_items tr td {
   border-right:0;
   border-left:0;
   border-bottom:0;
+  background:#fafafa;;
+  padding:10px;
+  border-bottom: 1px solid #eee;
 }
-#deals .deal-header {
-  height:60px;
-  padding:6px;
- }
-#deals .right {
+#deal_items tr:last-child td {
+  border-bottom:0;
 }
-#deals .left {
-  margin-right:60px;
-  float:;
+#deal_items td.right {
+  width:20%;
 }
-#deals .deal-body {
+#deal_items tr:first-child td:first-child {
+  border-top-left-radius: 4px;
+  -webkit-border-top-left-radius: 4px;
+  -moz-border-radius-topleft: 4px;
+}
+#deal_items tr:first-child td:last-child {
+  border-top-right-radius: 4px;
+  -webkit-border-top-right-radius: 4px;
+  -moz-border-radius-topright: 4px;
+}
+#deal_items  tr:last-child td:first-child {
+  border-bottom-left-radius: 4px;
+  -webkit-border-bottom-left-radius: 4px;
+  -moz-border-radius-bottomleft: 4px;
+}
+#deal_items tr:last-child td:last-child {
+  border-bottom-right-radius: 4px;
+  -webkit-border-bottom-right-radius: 4px;
+  -moz-border-radius-bottomright: 4px;
+}
+#deal_items .deal-header {
+  height:50px;
+  padding:10px;
+  overflow:hidden;
+  position:relative;
+}
+.deal-title {
+  clear:left;
+}
+.deal-merchant {
+  font-size:16px;
+  font-weight:bold;
+}
+.deal-dist {
+  font-size: 14px;
+  font-weight: normal;
+  color: #777;
+  margin-left:5px;
+}
+#deal_items .deal-body {
   display:none;
   padding:6px;
+  background: #eee;
 }
-#deals .ptr, #deals .ptr:hover {
+
+#brand , span.brand {
+  width:100px;
+  height:50px;
+  text-indent:-9999px;
+  display:block;
+  float:left;
+  background: transparent url("/img/walkable.png") no-repeat;
+}
+#brand.groupon, span.brand.groupon {
+  background-image: url("/img/groupon.png");
+  width:162px;
+  height:50px;
+}
+#brand.yelp, span.brand.yelp {
+  background-image: url("http://media3.ak.yelpcdn.com/static/201012163983986833/img/developers/yelp_logo_100x50.png");
+}
+#brand.gilt_city, span.brand.gilt_city {
+  height: 31px;
+  width:88px;
+  background-image: url("/img/gilt_city.gif");
+}
+#brand.living_social, span.brand.living_social {
+  background-image: url("/img/living_social.png");
+  width: 114px;
+}
+.deal-footer {
+  padding:5px 0 0 0;
+}
+.deal-footer .brand {
+  float:none;
+  margin:0 auto;
+}
+.page-footer span.brand {
+  margin: 10px 20px;
+}
+#deals, 
+#settings, 
+#blank {
+  display:none;
+}
+#blank.active,
+#deals.active, 
+#settings.active {
+  display:block;
+}
+
+#blank {
+  padding-top:80px;
+}
+#blank .page-body {
+  background-color:#eee;
+  border-radius:8px;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  padding:20px;
+  text-align:center;
+  line-height:40px;
+  font-size:16px;
+  font-weight:bold;
+  height: 40px;
+}
+.active .page-header-wrap {
+  width:100%;
+  position:fixed;
+  top:0;
+  left:0;
+  height:50px;
+  padding:5px 0;
+  background-color:#b0b0b0;
+  z-index:1000;
+}
+.page-header-wrap .container {
+  line-height:50px;
+  padding: 0 5px;
+  position:relative; 
+}
+.page-header-wrap .nav {
+  position:relative;
+  left:0;
+  display:block;
+  float:left;
+  margin: 0 10px 0 0;
+}
+.page-header-wrap .nav.pull-right {
+  float:right;
+}
+.page-header-wrap .nav > li {
+  display:block;
+  float:left;
+  line-height: 19px;
+}
+.page-header-wrap .nav > li > a {
+  float:none;
+  padding: 0 10px;
+  margin-top:17px;
+}
+.nav > li > a:hover {
+  background-color:transparent;
+}
+.page-body {
+  padding-top:65px;
+}
+#settings .tab-content ul {
+  width:100%;
+  margin:0;
+  list-style-type: none;
+}
+#settings .tab-content  li {
+  text-align:center;
+  padding: 10px 0;
+  background:#ddd;
+  border-bottom:1px solid #ccc;
+  position:relative;
+  height:50px;
+  line-height: 50px;
+}
+#set_vendors li, 
+#set_vendors li:hover {
+  cursor:pointer;
+}
+#set_vendors li span {
+  width:100%;
+  display:block;
+}
+#set_vendors li.active {
+  background:#06c;
+  background: #af91d7;
+  background: #d1c8de;
+}
+#set_vendors li:last-child {
+  border-bottom:0;
+}
+#set_vendors li:first-child {
+  /*-webkit-border-top-left-radius: 8px;*/
+  -webkit-border-top-right-radius: 8px;
+  -moz-border-radius-topright: 8px;
+}
+#set_vendors li:last-child {
+  -webkit-border-bottom-left-radius: 8px;
+  -webkit-border-bottom-right-radius: 8px;
+  -moz-border-radius-bottomleft: 8px;
+  -moz-border-radius-bottomright: 8px;
+}
+#set_vendors tr:first-child td:first-child{
+  -webkit-border-top-left-radius: 8px;
+}
+#set_vendors tr:first-child td:last-child{
+  -webkit-border-top-right-radius: 8px;
+}
+#set_vendors tr:last-child td:first-child {
+  -webkit-border-bottom-left-radius: 8px;
+}
+#set_vendors tr:last-child td:last-child {
+  -webkit-border-bottom-right-radius: 8px;
+}
+#settings .nav-tabs {
+  border-bottom:0;
+}
+#settings .nav {
+  margin:0;
+}
+
+.nav-tabs > li > a:hover,
+.nav-tabs > .active > a,
+.nav-tabs > .active > a:hover {
+  background: #ddd;
+}
+.nav-tabs > li > a:hover 
+{ background:inherit;
+  border-top:0;;
+  border-left:0;
+  border-right:0;
+  border-bottom:0;
+}
+.ptr, .ptr:hover {
   cursor: pointer;
-}
-#deals .deal-vendor {
 }
 
 .container {
-  width:760px;
+  width:500px;
 }
+
 @media screen and (max-width: 479px) {
 
   .container {
@@ -50,7 +299,7 @@ a:hover i {
   }
 }
 
-@media screen and (min-width:480px) and (max-width:759px) {
+@media screen and (min-width:480px) and (max-width:499px) {
 
   .container {
     width:480px;

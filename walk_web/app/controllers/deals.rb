@@ -30,7 +30,7 @@ WalkWeb.controllers :deals do
       return not_found
     end
 
-    render 'deals/blank'
+    render 'deals/show'
   end
 
   # Handle no-js using .html suffix?
