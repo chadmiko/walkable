@@ -16,8 +16,16 @@
   <div id="header" class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container">
-        <a class="brand" href="/deals/chicago">&lt;w&gt;</a>
-        <span class="vendor hidden">vendor</span>
+        <ul class="vendors nav">
+          <li class="dropdown">
+          <a class="vendor" href="#" data-toggle="dropdown">walkable <b class="caret"></b></a>
+            <ul class="dropdown-menu"> 
+              <li><a class="yelp" href="#" data-toggle="dropdown">yelp</a></li>
+              <li><a class="groupon" href="#" data-toggle="dropdown">groupon</a></li>
+            </ul>
+           </li>
+        </ul>
+        
         <ul class="hidden nav pull-right">
          <li><a href="#" id="sync"><i class="icon-white icon-refresh"></i>&nbsp;Refresh</a></li>
         </ul>
@@ -29,7 +37,25 @@
     <div id="main" role="main">
       <%= yield %>
     </div>
-    <div id="overlay">Loading...</div>
+    <div id="loading" class="modal">
+      <div class="modal-header"></div><div class="modal-body">Loading...</div>
+    </div>
   </div> <!-- //#wrapper -->
+
+  <script type="text/javascript">
+    var opts = {
+      deals: {
+        market: 'chicago'
+      },
+      vendors: {
+        data: <%= vendors %>
+      }
+    };
+
+    window.app = new App($('#main'), opts);
+    window.addEventListener('popstate', function(e) {
+      window.app.navigate(location.pathname.substr(1), true);
+    });
+   </script>
 </body>
 </html>

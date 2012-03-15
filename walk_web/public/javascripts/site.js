@@ -1,11 +1,13 @@
-$(function(){
+//$(function(){
   
-var Page = function() {};
+var Page = function() {
+  $('#loading').modal({keyboard: false, show: false, backdrop: false}); 
+};
 Page.prototype.start = function stop() {
-    $('#flash').empty().html('Loading...').show();
+  $('#loading').modal('show');
 };
 Page.prototype.stop = function() {
-    $('#flash').hide().empty();
+  $('#loading').modal('hide');
 };
 
 Page.prototype.request = function(opts) {
@@ -169,6 +171,21 @@ var Locator = Backbone.Model.extend({
     this.trigger(ev); 
   }
 });
+
+var Vendor = Backbone.Model.extend({
+defaults: {
+  active: false
+},
+toggle: function() {
+  this.set({active: !(this.get('active'))});
+}
+});
+var Vendors = Backbone.Collection.extend({
+  model: Vendor,
+  initialize: function(opts) {
+    this.reset(opts.data); 
+  }
+});
 var Deal = Backbone.Model.extend({
   defaults: {
     active: false
@@ -261,18 +278,11 @@ var HeaderView = Backbone.View.extend({
 var DealHeaderView = Backbone.View.extend({
   tagName: 'div',
   className: 'deal-header',
-  template: _.template('<div class="left ptr"><h4 class="deal-merchant"><%= name %>&nbsp;<small class="deal-dist"><%= distance %> mi.</small></h4><span class="deal-title"><%= title %></span></div><div class=""><span class="deal-vendor"><%= vendor %></span></div>'),
+  template: _.template('<div class="left ptr"><h4 class="deal-merchant"><%= name %>&nbsp;<small class="deal-dist"><% print (distance.toFixed(2)); %> mi.</small></h4><span class="deal-title"><%= title %></span></div><div class=""><span class="deal-vendor"><%= vendor %></span></div>'),
   initialize: function(opts) {
     _.bindAll(this, 'render');
   },
   render: function() {
-    //crappy yelp hack
-    /*if (this.model.get('vendor') == 'yelp') {
-      tmp = this.model.get('title');
-      this.model.set('title', this.model.get('name'));
-      this.model.set('name', tmp);
-    }*/
-    
     $(this.el).append(this.template(this.model.toJSON()));
     return this;
   }
@@ -293,7 +303,7 @@ var DealBodyView = Backbone.View.extend({
 var DealOptionsView = Backbone.View.extend({
   tagName: 'ul',
   className: 'deal-options unstyled',
-  template: _.template('<li><div class="row"><div class="span3"><%= title %></div><div class="span1"><a href="<%= buyUrl %>" title="Buy It!" class="btn btn-primary btn-mini">Buy!</a></div></div></li>'),
+  template: _.template('<li><div class="row"><div class="span3"><%= title %></div><div class="span1"><a href="<%= buyUrl %>" target="_blank" title="Buy It!" class="btn btn-primary btn-mini">Buy!</a></div></div></li>'),
   template_no_title: _.template('<li><a href="<% buyUrl %>" title="Buy It!" class="btn btn-primary">Buy!</a></li>'),
   template_no_url:   _.template('<li><%= title %></li>'),
   initialize: function(opts) {
@@ -316,8 +326,8 @@ var DealOptionsView = Backbone.View.extend({
           t = self.template_no_title;
         else
           t = self.template_no_url;
-
-        $(self.el).append(t(o)); 
+        
+          $(self.el).append(t(o)); 
       });
       //this.addAll(items.options);
     }
@@ -341,8 +351,6 @@ var DealView = Backbone.View.extend({
   initialize: function(opts) {
     _.bindAll(this, 'render');
     this.attributes = {"data-id": this.model.get('did')};
-    dist = this.model.get('distance');
-    this.model.set('distance', dist.toFixed(2));
     this._header = new DealHeaderView({model: this.model});
     this._body   = new DealBodyView({model: this.model});
   },
@@ -395,7 +403,8 @@ var App = Backbone.Router.extend({
     this._el = el;
     //this._errors  = opts.errors ? opts.errors : new Errors();
     //this._locator = opts.locator ? opts.locator : new Locator();
-    this._deals = new Deals(opts);
+    this._vendors = new Vendors(opts.vendors);
+    this._deals = new Deals(opts.deals);
     this._views = {
       deals: new DealsView({collection: this._deals}),
       header: new HeaderView({model: this._deals.locator}),
@@ -404,6 +413,7 @@ var App = Backbone.Router.extend({
  
     $('h1').hide();
     $('.nav').show();
+    this.bindLinks();
     Backbone.history.start({pushState: true});
   },
 
@@ -420,19 +430,40 @@ var App = Backbone.Router.extend({
   notFound: function(splat) {
     console.log(splat);
               alert("Page not found");
+  },
+  bindLinks: function() {
+    var self = this;
+    $('a.push').click(function(e) {
+      e = e || window.event;
+      var target = e.target || e.srcElement;
+      var uri = false;
+      if (target.nodeName.toLowerCase() === 'a') {
+        uri = target.getAttribute('href');
+      } else if ($(target, 'a').length == 1) {
+        target = $(target).parent('a');
+        uri = target.attr('href');
+      }
+      console.log('push');
+      if ( uri ) {
+        e.preventDefault();
+        //var uri = target.getAttribute('href');
+        //var uri = target.attr('href');
+        self.navigate(uri.substr(1), true)
+        return false;
+      }
+    });
   } 
 });
 
    
-  window.app = new App($('#main'), {market: 'chicago'});
 
    //make Backbone work with normal links, degrade gracefully 
   //see:  https://github.com/documentcloud/backbone/issues/456
-  window.document.addEventListener('click', function(e) {
+/*  window.document.addEventListener('click', function(e) {
         e = e || window.event;
         var target = e.target || e.srcElement;
         var uri = false;
- 
+        console.log(target, target.getAttribute('href')); 
         if (target.nodeName.toLowerCase() === 'a') {
           uri = target.getAttribute('href');
         } else if ($(target, 'a').length == 1) {
@@ -448,8 +479,9 @@ var App = Backbone.Router.extend({
           return false;
         }
   });
-
+  window.app = new App($('#main'), {market: 'chicago'});
   window.addEventListener('popstate', function(e) {
     window.app.navigate(location.pathname.substr(1), true);
   });
-});
+*/
+//});

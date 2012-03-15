@@ -1,2 +1,4 @@
 *.lock
 *.swp
+*.log
+walk_web/log/*
