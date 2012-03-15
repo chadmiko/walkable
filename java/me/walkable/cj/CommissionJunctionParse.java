@@ -8,6 +8,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import me.walkable.db.Deal;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -62,6 +64,9 @@ public class CommissionJunctionParse {
 					CommissionJunctionObject obj = new CommissionJunctionObject();
 					//					obj.adId = getTagValue("ad-id", eElement);
 					obj.advertiserName = getTagValue("advertiser-name", eElement);
+					if (obj.advertiserName.equals("Gilt City")){
+						obj.advertiserName = Deal.VENDOR_GILT_CITY;
+					}
 					obj.advertiserCategory = getTagValue("advertiser-category", eElement);
 					obj.setBuyUrl(getTagValue("buy-url", eElement));
 					obj.description = getTagValue("description", eElement);

@@ -24,7 +24,7 @@ public class Deal {
 
 	public static final String VENDOR_GROUPON = "groupon";
 	public static final String VENDOR_YELP = "yelp";
-	public static final String VENDOR_GILT_CITY = "Gilt City";
+	public static final String VENDOR_GILT_CITY = "gilt_city";
 	public static final String VENDOR_LIVING_SOCIAL = "living_social";
 	public static final int REMAINING_QUANTITY_UNLIMITED = -999999999;
 
