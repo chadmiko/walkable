@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import me.walkable.util.UtcTime;
 import me.walkable.util.Geocode.OpenStreetMapObject;
 
 /**
@@ -94,6 +95,7 @@ public class Location {
 			//Ignore Duplicate
 			//			System.err.println("Found Duplicate Location");
 			lid = findLocation(conn);
+			updateLocation(conn, lid);
 
 		} catch (SQLException e) {
 			System.out.println(ps.toString());
@@ -112,6 +114,44 @@ public class Location {
 		}
 
 		return lid;
+	}
+
+	/**
+	 * @param conn
+	 * @param lid2
+	 */
+	private void updateLocation(Connection conn, int lid2) {
+		String updateDeal = "Update locations "
+				+ "SET street = ?, street2 = ?, neighborhood = ?, zip = ?, "
+				+ "lat = ?, lng = ?, name = ?, url = ? "
+				+ "WHERE lid = ?";
+		PreparedStatement ps = null;
+		try {
+			ps = conn.prepareStatement(updateDeal);
+			int x=1;
+			ps.setString(x++, this.street);
+			ps.setString(x++, this.street2);
+			ps.setString(x++, this.neighborhood);
+			ps.setString(x++, zip);
+			ps.setDouble(x++, this.lat);
+			ps.setDouble(x++, this.lng);
+			ps.setString(x++, this.name);
+			ps.setString(x++, this.url);
+			ps.setInt(x++, lid2);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println(ps.toString());
+			e.printStackTrace();
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) { /*ignored*/ }
+			}
+		}
+
+
+		
 	}
 
 	private int findLocation(Connection conn){

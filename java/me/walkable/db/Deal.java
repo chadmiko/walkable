@@ -162,7 +162,7 @@ public class Deal {
 	 * @param conn
 	 * @param did2
 	 */
-	private void updateDeal(Connection conn, int did) {
+	private void updateDeal(Connection conn, int did2) {
 		String updateDeal = "Update deals "
 				+ "SET vendor = ?, title = ?, link_url = ?, start_date = ?, "
 				+ "end_date = ?, updated_at = ?, utc_offset = ?, items = ? "
@@ -179,7 +179,7 @@ public class Deal {
 			ps.setTimestamp(x++, UtcTime.getCurrentTime());
 			ps.setInt(x++, this.offset);
 			ps.setString(x++, this.items.toString());
-			ps.setInt(x++, did);
+			ps.setInt(x++, did2);
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println(ps.toString());
